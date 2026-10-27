@@ -1,0 +1,2715 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumina — Tradutor visual gratuito</title>
+  <meta name="description" content="Traduza entre inglês e português e veja o significado ganhar forma com imagens ilustrativas. 100% gratuito, sem cadastro e sem chave de API." />
+  <meta name="theme-color" content="#05060f" />
+  <meta property="og:title" content="Lumina — Tradutor visual gratuito" />
+  <meta property="og:description" content="Tradução inglês ⇄ português com significado visual. Sem chaves, sem cadastro, sem custo." />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop stop-color='%232563eb'/%3E%3Cstop offset='.55' stop-color='%237c3aed'/%3E%3Cstop offset='1' stop-color='%23d946ef'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Cpath d='M20 20h24M32 20v26M22 34h20' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://api.mymemory.translated.net" />
+  <link rel="preconnect" href="https://commons.wikimedia.org" />
+  <link rel="preconnect" href="https://thumb.wikimedia.org" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+          },
+          colors: {
+            ink: {
+              950: '#05060f',
+              900: '#080a14',
+              850: '#0b0e1b',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg: #05060f;
+      --line: rgba(255, 255, 255, 0.08);
+      --muted: #94a3b8;
+      --blue: #3b82f6;
+      --violet: #8b5cf6;
+      --fuchsia: #d946ef;
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      background: var(--bg);
+    }
+
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: #e2e8f0;
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    ::selection {
+      background: rgba(139, 92, 246, 0.35);
+      color: #fff;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #070812;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 999px;
+      border: 2px solid #070812;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    .no-scroll {
+      overflow: hidden !important;
+    }
+
+    /* ---------- Background ---------- */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: -10;
+      overflow: hidden;
+      pointer-events: none;
+      background: #05060f;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 9999px;
+      filter: blur(90px);
+      opacity: 0.5;
+      will-change: transform;
+    }
+
+    .orb-blue {
+      width: 540px;
+      height: 540px;
+      top: -180px;
+      left: -140px;
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.55), transparent 68%);
+      animation: float 16s ease-in-out infinite;
+    }
+
+    .orb-violet {
+      width: 640px;
+      height: 640px;
+      top: 70px;
+      right: -240px;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.45), transparent 68%);
+      animation: float 20s ease-in-out infinite reverse;
+    }
+
+    .orb-fuchsia {
+      width: 460px;
+      height: 460px;
+      bottom: -160px;
+      left: 34%;
+      background: radial-gradient(circle, rgba(217, 70, 239, 0.26), transparent 70%);
+      animation: float 24s ease-in-out infinite;
+    }
+
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(148, 163, 184, 0.055) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, #000 28%, transparent 78%);
+      mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, #000 28%, transparent 78%);
+    }
+
+    .noise {
+      position: absolute;
+      inset: 0;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      50% { transform: translate3d(0, -18px, 0); }
+    }
+
+    /* ---------- Surfaces ---------- */
+    .glass-card {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018) 45%, rgba(255, 255, 255, 0.03));
+      box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      overflow: hidden;
+      transition: border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.55), rgba(217, 70, 239, 0.45), transparent);
+      opacity: 0.55;
+      pointer-events: none;
+    }
+
+    .glass-card:hover {
+      border-color: rgba(148, 163, 184, 0.16);
+      box-shadow: 0 34px 90px -32px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    }
+
+    .logo-tile {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed 55%, #d946ef);
+      color: #fff;
+      font-size: 19px;
+      box-shadow: 0 10px 30px -8px rgba(99, 102, 241, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      flex: none;
+    }
+
+    .free-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      background: rgba(16, 185, 129, 0.08);
+      color: #6ee7b7;
+      padding: 7px 11px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .free-pill .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
+    }
+
+    /* ---------- Hero ---------- */
+    .hero-title {
+      font-size: clamp(2.35rem, 6vw, 4.6rem);
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+      font-weight: 800;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, #60a5fa 0%, #a78bfa 42%, #f0abfc 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(129, 140, 248, 0.22);
+      background: rgba(99, 102, 241, 0.08);
+      color: #c7d2fe;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .trust-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: rgba(255, 255, 255, 0.025);
+      color: #94a3b8;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .trust-chip i {
+      color: #818cf8;
+      font-size: 10px;
+    }
+
+    /* ---------- Cards ---------- */
+    .icon-tile {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.04);
+      color: #bfdbfe;
+      font-size: 17px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+      flex: none;
+    }
+
+    .icon-tile.blue {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.28), rgba(59, 130, 246, 0.08));
+      color: #93c5fd;
+      border-color: rgba(59, 130, 246, 0.25);
+    }
+
+    .icon-tile.violet {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.3), rgba(168, 85, 247, 0.08));
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.25);
+    }
+
+    .icon-tile.small {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      font-size: 14px;
+    }
+
+    .mini-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: #94a3b8;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* ---------- Language bar ---------- */
+    .lang-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.55);
+      border-radius: 18px;
+      padding: 9px 10px;
+    }
+
+    .lang-side {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .lang-code {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.92), rgba(79, 70, 229, 0.92));
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      box-shadow: 0 8px 20px -8px rgba(37, 99, 235, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      flex: none;
+    }
+
+    .lang-code.violet {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.92), rgba(217, 70, 239, 0.88));
+      box-shadow: 0 8px 20px -8px rgba(168, 85, 247, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .lang-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+
+    .lang-name {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #e2e8f0;
+      white-space: nowrap;
+    }
+
+    .swap-btn {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 1px solid rgba(129, 140, 248, 0.3);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.18), rgba(168, 85, 247, 0.18));
+      color: #c7d2fe;
+      font-size: 14px;
+      flex: none;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .swap-btn:hover {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.32), rgba(168, 85, 247, 0.32));
+      border-color: rgba(165, 180, 252, 0.55);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.08), 0 10px 24px -10px rgba(99, 102, 241, 0.7);
+    }
+
+    .swap-btn:active {
+      transform: scale(0.94);
+    }
+
+    .swap-btn i {
+      transform: rotate(var(--swap-rotation, 0deg));
+      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ---------- Editor ---------- */
+    .editor {
+      border: 1px solid var(--line);
+      background: rgba(2, 6, 23, 0.5);
+      border-radius: 18px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .editor:focus-within {
+      border-color: rgba(99, 102, 241, 0.55);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.08), inset 0 0 40px rgba(99, 102, 241, 0.03);
+    }
+
+    .editor.shake {
+      animation: shake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translateX(-1px); }
+      20%, 80% { transform: translateX(2px); }
+      30%, 50%, 70% { transform: translateX(-4px); }
+      40%, 60% { transform: translateX(4px); }
+    }
+
+    .editor textarea {
+      width: 100%;
+      min-height: 190px;
+      max-height: 360px;
+      resize: vertical;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      color: #f1f5f9;
+      font-size: 17px;
+      line-height: 1.65;
+      padding: 18px 18px 8px;
+    }
+
+    .editor textarea::placeholder {
+      color: #475569;
+    }
+
+    .editor-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 12px 12px;
+    }
+
+    .text-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 8px;
+      padding: 4px 7px;
+      color: #64748b;
+      font-size: 10.5px;
+      font-weight: 500;
+      transition: color 0.2s ease, background 0.2s ease;
+    }
+
+    .text-action:hover {
+      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .char-count {
+      font-size: 10px;
+      font-variant-numeric: tabular-nums;
+      color: #64748b;
+      white-space: nowrap;
+    }
+
+    .char-count.near-limit {
+      color: #fbbf24;
+    }
+
+    /* ---------- Buttons ---------- */
+    .primary-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      height: 52px;
+      border-radius: 15px;
+      background: linear-gradient(100deg, #2563eb 0%, #6d28d9 52%, #c026d3 100%);
+      background-size: 160% 100%;
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      box-shadow: 0 18px 40px -16px rgba(79, 70, 229, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      transition: background-position 0.5s ease, transform 0.2s ease, box-shadow 0.3s ease, opacity 0.2s ease;
+      overflow: hidden;
+    }
+
+    .primary-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.22) 45%, transparent 60%);
+      transform: translateX(-120%);
+      transition: transform 0.7s ease;
+      pointer-events: none;
+    }
+
+    .primary-btn:hover {
+      background-position: 100% 0;
+      transform: translateY(-1px);
+      box-shadow: 0 22px 50px -16px rgba(124, 58, 237, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .primary-btn:hover::after {
+      transform: translateX(120%);
+    }
+
+    .primary-btn:active {
+      transform: translateY(0) scale(0.995);
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .primary-btn:focus-visible {
+      outline: 2px solid #a5b4fc;
+      outline-offset: 3px;
+    }
+
+    .secondary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: rgba(255, 255, 255, 0.035);
+      color: #cbd5e1;
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 10.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.16);
+      color: #fff;
+    }
+
+    .secondary-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .secondary-btn:focus-visible {
+      outline: 2px solid #a5b4fc;
+      outline-offset: 2px;
+    }
+
+    .icon-btn {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: #94a3b8;
+      transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .icon-btn:focus-visible {
+      outline: 2px solid #a5b4fc;
+      outline-offset: 2px;
+    }
+
+    .icon-btn.speaking {
+      color: #c4b5fd;
+      border-color: rgba(139, 92, 246, 0.45);
+      animation: speaking-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes speaking-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.25); }
+      50% { box-shadow: 0 0 0 6px rgba(139, 92, 246, 0); }
+    }
+
+    .example-chip {
+      flex: none;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.03);
+      color: #94a3b8;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .example-chip:hover {
+      color: #e2e8f0;
+      border-color: rgba(129, 140, 248, 0.35);
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    .example-chip:focus-visible {
+      outline: 2px solid #a5b4fc;
+      outline-offset: 2px;
+    }
+
+    /* ---------- Result ---------- */
+    .empty-orb {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 82px;
+      height: 82px;
+      border-radius: 26px;
+      background: radial-gradient(circle at 30% 20%, rgba(96, 165, 250, 0.28), rgba(124, 58, 237, 0.14) 55%, rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(129, 140, 248, 0.22);
+      color: #a5b4fc;
+      font-size: 28px;
+      box-shadow: 0 24px 60px -24px rgba(99, 102, 241, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .empty-orb::after {
+      content: '';
+      position: absolute;
+      inset: -12px;
+      border-radius: 34px;
+      border: 1px dashed rgba(129, 140, 248, 0.16);
+      animation: spin 34s linear infinite;
+    }
+
+    .error-orb {
+      display: grid;
+      place-items: center;
+      width: 66px;
+      height: 66px;
+      border-radius: 21px;
+      border: 1px solid rgba(244, 63, 94, 0.22);
+      background: radial-gradient(circle at 30% 20%, rgba(244, 63, 94, 0.18), rgba(244, 63, 94, 0.04));
+      color: #fb7185;
+      font-size: 22px;
+    }
+
+    .mini-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: rgba(255, 255, 255, 0.025);
+      color: #64748b;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 9.5px;
+      font-weight: 500;
+    }
+
+    .mini-pill i {
+      color: #818cf8;
+      font-size: 9px;
+    }
+
+    .direction-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #a5b4fc;
+      background: rgba(99, 102, 241, 0.09);
+      border: 1px solid rgba(99, 102, 241, 0.18);
+      padding: 6px 9px;
+      border-radius: 999px;
+    }
+
+    .translation-text {
+      font-size: clamp(1.35rem, 2.6vw, 2rem);
+      line-height: 1.28;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+      color: #f8fafc;
+      overflow-wrap: anywhere;
+    }
+
+    .result-enter {
+      animation: reveal 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* ---------- Image ---------- */
+    .image-frame {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      background: #070a16;
+    }
+
+    .image-skeleton {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(99, 102, 241, 0.12), transparent 60%),
+        #070a16;
+      color: #64748b;
+      font-size: 11.5px;
+      overflow: hidden;
+    }
+
+    .image-skeleton::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.04) 50%, transparent 70%);
+      animation: shimmer 2s infinite;
+    }
+
+    .image-error {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 20px;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 11.5px;
+    }
+
+    #resultImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0;
+      transition: opacity 0.55s ease, transform 0.9s ease;
+      transform: scale(1.02);
+    }
+
+    .image-overlay {
+      position: absolute;
+      inset: auto 0 0 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 38px 12px 12px;
+      background: linear-gradient(to top, rgba(3, 6, 18, 0.94), rgba(3, 6, 18, 0.55) 55%, transparent);
+      pointer-events: none;
+    }
+
+    .image-overlay > * {
+      pointer-events: auto;
+    }
+
+    .image-credit {
+      font-size: 9.5px;
+      color: #cbd5e1;
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(255, 255, 255, 0.25);
+      max-width: 100%;
+    }
+
+    .image-credit:hover {
+      color: #fff;
+    }
+
+    .image-action {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .image-action:hover {
+      background: rgba(30, 41, 59, 0.95);
+      transform: translateY(-1px);
+    }
+
+    .image-action:focus-visible {
+      outline: 2px solid #a5b4fc;
+      outline-offset: 2px;
+    }
+
+    /* ---------- Skeletons ---------- */
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      background: rgba(148, 163, 184, 0.09);
+    }
+
+    .skeleton::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+      transform: translateX(-100%);
+      animation: shimmer 1.6s infinite;
+    }
+
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      border-top-color: #fff;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+      flex: none;
+    }
+
+    .spinner.large {
+      width: 34px;
+      height: 34px;
+      border-width: 3px;
+      border-color: rgba(129, 140, 248, 0.18);
+      border-top-color: #a78bfa;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ---------- Features ---------- */
+    .feature-card {
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: rgba(255, 255, 255, 0.022);
+      border-radius: 20px;
+      padding: 22px;
+      transition: border-color 0.3s ease, background 0.3s ease, transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(129, 140, 248, 0.22);
+      background: rgba(255, 255, 255, 0.035);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 1px solid rgba(129, 140, 248, 0.2);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(168, 85, 247, 0.12));
+      color: #a5b4fc;
+      font-size: 15px;
+    }
+
+    /* ---------- Toasts ---------- */
+    #toastContainer {
+      position: fixed;
+      z-index: 80;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: min(360px, calc(100vw - 32px));
+    }
+
+    .toast {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 12px 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(10, 13, 26, 0.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 20px 50px -18px rgba(0, 0, 0, 0.9);
+      color: #e2e8f0;
+      font-size: 12px;
+      line-height: 1.5;
+      animation: toast-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .toast > i {
+      margin-top: 1px;
+      font-size: 13px;
+    }
+
+    .toast.success {
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+    .toast.success > i {
+      color: #34d399;
+    }
+    .toast.error {
+      border-color: rgba(244, 63, 94, 0.25);
+    }
+    .toast.error > i {
+      color: #fb7185;
+    }
+    .toast.info {
+      border-color: rgba(99, 102, 241, 0.25);
+    }
+    .toast.info > i {
+      color: #818cf8;
+    }
+
+    .toast button {
+      margin-left: auto;
+      color: #64748b;
+      font-size: 11px;
+      padding: 2px;
+      transition: color 0.2s ease;
+      flex: none;
+    }
+
+    .toast button:hover {
+      color: #fff;
+    }
+
+    .toast.leaving {
+      animation: toast-out 0.25s ease forwards;
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes toast-out {
+      to { opacity: 0; transform: translateY(6px) scale(0.98); }
+    }
+
+    /* ---------- Lightbox ---------- */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .lightbox-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 4, 12, 0.86);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .lightbox-panel {
+      position: relative;
+      z-index: 1;
+      width: min(1100px, 100%);
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #05060f;
+      box-shadow: 0 40px 120px -30px #000;
+      animation: lightbox-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .lightbox-panel img {
+      width: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      background: #02040a;
+      display: block;
+    }
+
+    .lightbox-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(2, 6, 23, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #e2e8f0;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: background 0.2s ease;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(30, 41, 59, 0.95);
+    }
+
+    @keyframes lightbox-in {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* ---------- Reveal on load ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: reveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .reveal-1 { animation-delay: 0.04s; }
+    .reveal-2 { animation-delay: 0.12s; }
+    .reveal-3 { animation-delay: 0.2s; }
+
+    :focus-visible {
+      outline: 2px solid #818cf8;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 640px) {
+      .lang-name { font-size: 12.5px; }
+      .lang-code { width: 34px; height: 34px; font-size: 10px; }
+      .swap-btn { width: 38px; height: 38px; }
+      .editor textarea { min-height: 160px; font-size: 16px; }
+      .glass-card { border-radius: 22px; }
+      #toastContainer { left: 16px; right: 16px; bottom: 16px; max-width: none; }
+      .lightbox-panel img { max-height: 70vh; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="min-h-screen antialiased">
+  <div class="bg-layer" aria-hidden="true">
+    <div class="orb orb-blue"></div>
+    <div class="orb orb-violet"></div>
+    <div class="orb orb-fuchsia"></div>
+    <div class="grid-overlay"></div>
+    <div class="noise"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-30 border-b border-white/[0.06] bg-slate-950/45 backdrop-blur-xl">
+    <div class="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8">
+      <a href="#" class="group flex items-center gap-3" aria-label="Lumina — início">
+        <div class="logo-tile">
+          <i class="fa-solid fa-language" aria-hidden="true"></i>
+        </div>
+        <div>
+          <p class="text-[17px] font-extrabold leading-none tracking-tight text-white">Lumina</p>
+          <p class="mt-1 text-[9px] font-semibold uppercase tracking-[0.28em] text-slate-500">Tradutor visual</p>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-2 sm:gap-3">
+        <a href="#como-funciona" class="hidden items-center gap-1.5 rounded-lg px-3 py-2 text-[11.5px] font-medium text-slate-400 transition hover:bg-white/[0.04] hover:text-white sm:inline-flex">
+          Como funciona
+        </a>
+        <span class="free-pill">
+          <span class="dot" aria-hidden="true"></span>
+          100% gratuito
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="relative mx-auto max-w-7xl px-5 pb-10 pt-14 text-center sm:px-8 sm:pt-20">
+      <div class="reveal reveal-1">
+        <span class="hero-badge">
+          <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+          Tradução + significado visual
+        </span>
+      </div>
+
+      <h1 class="hero-title reveal reveal-1 mx-auto mt-6 max-w-4xl text-white">
+        Cada palavra ganha
+        <span class="gradient-text">uma imagem.</span>
+      </h1>
+
+      <p class="reveal reveal-2 mx-auto mt-5 max-w-2xl text-[13.5px] leading-7 text-slate-400 sm:text-[15px]">
+        Traduza entre inglês e português e veja o sentido ganhar forma com uma imagem ilustrativa.
+        Sem chaves, sem cadastro, sem custo.
+      </p>
+
+      <div class="reveal reveal-3 mt-7 flex flex-wrap items-center justify-center gap-2.5">
+        <span class="trust-chip"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Resposta em segundos</span>
+        <span class="trust-chip"><i class="fa-solid fa-lock-open" aria-hidden="true"></i> Sem chave de API</span>
+        <span class="trust-chip"><i class="fa-solid fa-earth-americas" aria-hidden="true"></i> APIs públicas</span>
+      </div>
+    </section>
+
+    <!-- App -->
+    <section class="relative mx-auto max-w-7xl px-5 pb-16 sm:px-8">
+      <div class="grid gap-5 lg:grid-cols-[1.02fr_0.98fr] lg:items-start">
+
+        <!-- Input card -->
+        <article class="glass-card p-5 sm:p-6">
+          <div class="relative z-10">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="icon-tile blue">
+                  <i class="fa-solid fa-pen-nib" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <h2 class="text-base font-semibold text-white">Escreva</h2>
+                  <p class="text-[11px] text-slate-500">Palavra, expressão ou frase</p>
+                </div>
+              </div>
+              <span class="mini-badge">
+                <i class="fa-solid fa-language" aria-hidden="true"></i>
+                EN ⇄ PT
+              </span>
+            </div>
+
+            <div class="lang-bar mt-5">
+              <div class="lang-side">
+                <span id="sourceCode" class="lang-code">EN</span>
+                <div>
+                  <p class="lang-label">De</p>
+                  <p id="sourceName" class="lang-name">Inglês</p>
+                </div>
+              </div>
+
+              <button id="swapBtn" type="button" class="swap-btn" aria-label="Inverter direção da tradução" title="Inverter idiomas">
+                <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i>
+              </button>
+
+              <div class="lang-side justify-end text-right">
+                <div>
+                  <p class="lang-label">Para</p>
+                  <p id="targetName" class="lang-name">Português</p>
+                </div>
+                <span id="targetCode" class="lang-code violet">PT</span>
+              </div>
+            </div>
+
+            <div id="editor" class="editor mt-4">
+              <label for="sourceText" class="sr-only">Texto para traduzir</label>
+              <textarea
+                id="sourceText"
+                maxlength="1000"
+                rows="6"
+                spellcheck="true"
+                autocapitalize="sentences"
+                placeholder="Digite uma palavra ou frase em inglês..."
+                aria-describedby="charCount"
+              ></textarea>
+              <div class="editor-footer">
+                <div class="flex items-center gap-0.5">
+                  <button id="clearBtn" type="button" class="text-action" title="Limpar texto">
+                    <i class="fa-solid fa-eraser" aria-hidden="true"></i> Limpar
+                  </button>
+                  <button id="pasteBtn" type="button" class="text-action" title="Colar da área de transferência">
+                    <i class="fa-solid fa-paste" aria-hidden="true"></i> Colar
+                  </button>
+                </div>
+                <span id="charCount" class="char-count">0 / 1000</span>
+              </div>
+            </div>
+
+            <div class="mt-4 flex items-center gap-2.5 overflow-x-auto pb-1" style="scrollbar-width: none;">
+              <span class="flex-none text-[9px] font-semibold uppercase tracking-[0.16em] text-slate-600">Experimente</span>
+              <div id="exampleChips" class="flex items-center gap-2" role="group" aria-label="Exemplos de tradução"></div>
+            </div>
+
+            <button id="translateBtn" type="button" class="primary-btn mt-5 w-full">
+              <span id="btnLabel" class="inline-flex items-center gap-2.5">
+                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                Traduzir e visualizar
+              </span>
+              <span id="btnLoading" class="is-hidden items-center gap-2.5">
+                <span class="spinner" aria-hidden="true"></span>
+                Traduzindo...
+              </span>
+            </button>
+
+            <p class="mt-3 text-center text-[10.5px] text-slate-500">
+              <i class="fa-solid fa-keyboard" aria-hidden="true"></i>
+              Ctrl + Enter para traduzir
+              <span class="mx-1.5 text-slate-700">•</span>
+              MyMemory + acervos públicos
+            </p>
+          </div>
+        </article>
+
+        <!-- Result card -->
+        <article id="resultCard" class="glass-card p-5 sm:p-6" aria-live="polite" aria-busy="false">
+          <div class="relative z-10">
+            <div class="flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="icon-tile violet">
+                  <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                </div>
+                <div>
+                  <h2 class="text-base font-semibold text-white">Resultado</h2>
+                  <p class="text-[11px] text-slate-500">Tradução e significado visual</p>
+                </div>
+              </div>
+              <span class="mini-badge">
+                <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                MyMemory
+              </span>
+            </div>
+
+            <div class="relative mt-5">
+              <!-- Empty -->
+              <div id="resultEmpty" class="flex min-h-[500px] flex-col items-center justify-center px-6 py-10 text-center">
+                <div class="empty-orb">
+                  <i class="fa-solid fa-image" aria-hidden="true"></i>
+                </div>
+                <h3 class="mt-7 text-lg font-semibold text-white">Pronto para traduzir</h3>
+                <p class="mt-2 max-w-[300px] text-[12.5px] leading-6 text-slate-500">
+                  Digite uma palavra ou frase ao lado. A tradução e uma imagem ilustrativa aparecerão aqui.
+                </p>
+                <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
+                  <span class="mini-pill"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Rápido</span>
+                  <span class="mini-pill"><i class="fa-solid fa-image" aria-hidden="true"></i> Visual</span>
+                  <span class="mini-pill"><i class="fa-solid fa-lock-open" aria-hidden="true"></i> Grátis</span>
+                </div>
+              </div>
+
+              <!-- Loading -->
+              <div id="resultLoading" class="is-hidden min-h-[500px] pt-1">
+                <div class="flex items-center justify-between">
+                  <div class="skeleton h-6 w-28 rounded-full"></div>
+                  <div class="flex gap-1.5">
+                    <div class="skeleton h-8 w-8 rounded-lg"></div>
+                    <div class="skeleton h-8 w-8 rounded-lg"></div>
+                  </div>
+                </div>
+                <div class="skeleton mt-5 h-9 w-3/4"></div>
+                <div class="skeleton mt-3 h-9 w-1/2"></div>
+                <div class="mt-5 flex gap-4">
+                  <div class="skeleton h-3 w-16"></div>
+                  <div class="skeleton h-3 w-20"></div>
+                  <div class="skeleton h-3 w-14"></div>
+                </div>
+                <div class="mt-7 border-t border-white/[0.06] pt-5">
+                  <div class="flex items-center justify-between">
+                    <div class="skeleton h-8 w-40"></div>
+                    <div class="skeleton h-7 w-24 rounded-lg"></div>
+                  </div>
+                  <div class="skeleton mt-3 aspect-video w-full rounded-2xl"></div>
+                </div>
+              </div>
+
+              <!-- Error -->
+              <div id="resultError" class="is-hidden flex min-h-[500px] flex-col items-center justify-center px-6 text-center">
+                <div class="error-orb">
+                  <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                </div>
+                <h3 class="mt-5 text-base font-semibold text-white">Não foi possível traduzir</h3>
+                <p id="resultErrorText" class="mt-2 max-w-[320px] text-[12.5px] leading-6 text-slate-500"></p>
+                <button id="retryTranslateBtn" type="button" class="secondary-btn mt-5">
+                  <i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Tentar novamente
+                </button>
+              </div>
+
+              <!-- Content -->
+              <div id="resultContent" class="is-hidden">
+                <div class="flex items-center justify-between gap-3">
+                  <span id="directionPill" class="direction-pill">Inglês → Português</span>
+                  <div class="flex items-center gap-1.5">
+                    <button id="copyBtn" type="button" class="icon-btn" aria-label="Copiar tradução" title="Copiar tradução">
+                      <i class="fa-solid fa-copy" aria-hidden="true"></i>
+                    </button>
+                    <button id="speakBtn" type="button" class="icon-btn" aria-label="Ouvir tradução" title="Ouvir tradução">
+                      <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <p id="translationText" class="translation-text mt-4"></p>
+
+                <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-slate-500">
+                  <span><i class="fa-solid fa-bolt text-indigo-400/80" aria-hidden="true"></i> <span id="translationTime">—</span></span>
+                  <span><i class="fa-solid fa-robot text-indigo-400/80" aria-hidden="true"></i> MyMemory</span>
+                  <span><i class="fa-solid fa-language text-indigo-400/80" aria-hidden="true"></i> Tradução automática</span>
+                </div>
+
+                <div class="mt-6 border-t border-white/[0.07] pt-5">
+                  <div class="flex items-center justify-between gap-3">
+                    <div class="flex min-w-0 items-center gap-2.5">
+                      <div class="icon-tile small violet">
+                        <i class="fa-solid fa-image" aria-hidden="true"></i>
+                      </div>
+                      <div class="min-w-0">
+                        <h3 class="text-[13px] font-semibold text-white">Significado visual</h3>
+                        <p id="imageSourceBadge" class="truncate text-[10px] text-slate-500">Aguardando tradução</p>
+                      </div>
+                    </div>
+                    <button id="regenerateBtn" type="button" class="secondary-btn" disabled>
+                      <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
+                      <span class="hidden sm:inline">Regenerar</span>
+                    </button>
+                  </div>
+
+                  <div class="image-frame mt-3">
+                    <div id="imageLoading" class="image-skeleton">
+                      <div class="spinner large" aria-hidden="true"></div>
+                      <p>Buscando uma imagem que combine...</p>
+                      <div class="flex gap-1.5 opacity-40" aria-hidden="true">
+                        <span class="h-1 w-1 rounded-full bg-indigo-300"></span>
+                        <span class="h-1 w-1 rounded-full bg-violet-300"></span>
+                        <span class="h-1 w-1 rounded-full bg-fuchsia-300"></span>
+                      </div>
+                    </div>
+
+                    <div id="imageError" class="is-hidden image-error">
+                      <div class="icon-tile small">
+                        <i class="fa-solid fa-image" aria-hidden="true"></i>
+                      </div>
+                      <p id="imageErrorText">Não foi possível carregar a imagem.</p>
+                      <button id="retryImageBtn" type="button" class="secondary-btn">
+                        <i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Tentar novamente
+                      </button>
+                    </div>
+
+                    <div id="imageReady" class="is-hidden absolute inset-0">
+                      <img id="resultImage" alt="" decoding="async" />
+                      <div class="image-overlay">
+                        <div class="min-w-0">
+                          <p id="imageCaption" class="truncate text-[12px] font-semibold text-white"></p>
+                          <a id="imageCredit" class="image-credit mt-0.5 inline-block max-w-full truncate" href="#" target="_blank" rel="noopener noreferrer"></a>
+                        </div>
+                        <div class="flex flex-none gap-1.5">
+                          <button id="expandImageBtn" type="button" class="image-action" aria-label="Ampliar imagem" title="Ampliar">
+                            <i class="fa-solid fa-expand" aria-hidden="true"></i>
+                          </button>
+                          <button id="downloadImageBtn" type="button" class="image-action" aria-label="Baixar imagem" title="Baixar">
+                            <i class="fa-solid fa-download" aria-hidden="true"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p class="mt-2.5 text-[10px] leading-4 text-slate-600">
+                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                    Imagem ilustrativa escolhida a partir do termo traduzido. Use “Regenerar” para ver outras opções.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="como-funciona" class="relative mx-auto max-w-7xl scroll-mt-24 px-5 pb-20 sm:px-8">
+      <div class="max-w-2xl">
+        <p class="text-[10px] font-bold uppercase tracking-[0.22em] text-indigo-400">Além da tradução</p>
+        <h2 class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">Entenda o que as palavras carregam.</h2>
+        <p class="mt-3 text-[13px] leading-6 text-slate-400">
+          Uma camada visual para ajudar a memorizar, contextualizar e sentir o significado — usando apenas serviços abertos.
+        </p>
+      </div>
+
+      <div class="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-bolt" aria-hidden="true"></i></div>
+          <h3 class="mt-4 text-[13.5px] font-semibold text-white">Tradução em segundos</h3>
+          <p class="mt-2 text-[11.5px] leading-5 text-slate-500">
+            O MyMemory traduz palavras, expressões e frases curtas sem pedir chave, login ou cartão.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-image" aria-hidden="true"></i></div>
+          <h3 class="mt-4 text-[13.5px] font-semibold text-white">Imagem que acompanha</h3>
+          <p class="mt-2 text-[11.5px] leading-5 text-slate-500">
+            Buscamos uma foto relacionada ao termo em acervos públicos e gratuitos, com alternativas para regenerar.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></div>
+          <h3 class="mt-4 text-[13.5px] font-semibold text-white">Sem cadastro</h3>
+          <p class="mt-2 text-[11.5px] leading-5 text-slate-500">
+            Nada de chave de API, conta ou configuração. Abra o arquivo no navegador e comece a usar.
+          </p>
+        </article>
+
+        <article class="feature-card">
+          <div class="feature-icon"><i class="fa-solid fa-code" aria-hidden="true"></i></div>
+          <h3 class="mt-4 text-[13.5px] font-semibold text-white">Um único arquivo</h3>
+          <p class="mt-2 text-[11.5px] leading-5 text-slate-500">
+            HTML, CSS e JavaScript juntos. Fácil de hospedar, editar, versionar e compartilhar.
+          </p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative border-t border-white/[0.06] bg-slate-950/40">
+    <div class="mx-auto max-w-7xl px-5 py-10 sm:px-8">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <div class="flex items-start gap-3">
+          <div class="logo-tile" style="width: 36px; height: 36px; border-radius: 11px; font-size: 16px;">
+            <i class="fa-solid fa-language" aria-hidden="true"></i>
+          </div>
+          <div>
+            <p class="text-[13px] font-semibold text-white">Lumina</p>
+            <p class="mt-1 max-w-xs text-[11px] leading-5 text-slate-500">
+              Tradução e imagens com APIs públicas e gratuitas. Feito para demonstrar o poder de serviços abertos.
+            </p>
+          </div>
+        </div>
+
+        <nav class="flex flex-wrap gap-x-5 gap-y-2 text-[11px] text-slate-500" aria-label="Fontes de dados">
+          <a href="https://mymemory.translated.net" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
+            MyMemory <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
+          </a>
+          <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
+            Unsplash <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
+          </a>
+          <a href="https://commons.wikimedia.org" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
+            Wikimedia Commons <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
+          </a>
+          <a href="https://picsum.photos" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
+            Picsum <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
+          </a>
+        </nav>
+      </div>
+
+      <div class="mt-8 border-t border-white/[0.06] pt-5 text-[10.5px] leading-5 text-slate-600">
+        <p>Traduções automáticas podem conter imprecisões. O MyMemory limita o uso anônimo a 5.000 caracteres por dia por IP.</p>
+        <p class="mt-1">O Unsplash Source foi descontinuado; quando ele não responde, buscamos imagens no Wikimedia Commons automaticamente.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toasts -->
+  <div id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox is-hidden" role="dialog" aria-modal="true" aria-labelledby="lightboxCaption">
+    <div class="lightbox-backdrop" data-close></div>
+    <div class="lightbox-panel">
+      <button id="closeLightboxBtn" type="button" class="lightbox-close" aria-label="Fechar imagem ampliada">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <img id="lightboxImage" alt="" />
+      <div class="lightbox-footer">
+        <p id="lightboxCaption" class="min-w-0 truncate text-[12px] font-semibold text-white"></p>
+        <a id="lightboxCredit" class="image-credit flex-none" href="#" target="_blank" rel="noopener noreferrer"></a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      /* ------------------------------------------------------------------
+         Configuração
+         ------------------------------------------------------------------ */
+      const API = {
+        translate: 'https://api.mymemory.translated.net/get',
+        commons: 'https://commons.wikimedia.org/w/api.php',
+        unsplash: 'https://source.unsplash.com/featured/?',
+        picsum: 'https://picsum.photos/seed/',
+      };
+
+      const LANGS = {
+        en: {
+          name: 'Inglês',
+          short: 'EN',
+          pair: 'en',
+          speech: 'en-US',
+          placeholder: 'Digite uma palavra ou frase em inglês...',
+        },
+        pt: {
+          name: 'Português',
+          short: 'PT',
+          pair: 'pt-BR',
+          speech: 'pt-BR',
+          placeholder: 'Digite uma palavra ou frase em português...',
+        },
+      };
+
+      const EXAMPLES = {
+        'en-pt': ['serendipity', 'break the ice', 'The early bird catches the worm.'],
+        'pt-en': ['saudade', 'quebrar o gelo', 'O amor é a força mais poderosa do universo.'],
+      };
+
+      const MAX_CHARS = 1000;
+      const CHUNK_BYTES = 480;
+
+      const STOPWORDS = new Set([
+        'the', 'a', 'an', 'of', 'to', 'in', 'on', 'at', 'for', 'and', 'or', 'but', 'is', 'are',
+        'was', 'were', 'be', 'been', 'being', 'with', 'by', 'from', 'as', 'that', 'this', 'it',
+        'its', 'you', 'your', 'he', 'she', 'they', 'we', 'i', 'me', 'my', 'our', 'their', 'his',
+        'her', 'not', 'no', 'do', 'does', 'did', 'have', 'has', 'had', 'will', 'would', 'can',
+        'could', 'should', 'may', 'might', 'must', 'very', 'just', 'so', 'than', 'then', 'there',
+        'here', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most',
+        'other', 'some', 'such', 'only', 'own', 'same', 'too', 'also', 'into', 'over', 'under',
+        'again', 'once', 'about', 'after', 'before', 'between', 'through', 'during', 'without',
+        'o', 'a', 'os', 'as', 'um', 'uma', 'uns', 'umas', 'de', 'do', 'da', 'dos', 'das', 'em',
+        'no', 'na', 'nos', 'nas', 'por', 'pelo', 'pela', 'para', 'com', 'sem', 'sob', 'sobre',
+        'entre', 'e', 'ou', 'mas', 'que', 'se', 'como', 'quando', 'onde', 'porque', 'pois', 'é',
+        'são', 'foi', 'foram', 'ser', 'estar', 'está', 'estão', 'tem', 'têm', 'ter', 'há', 'meu',
+        'minha', 'seu', 'sua', 'nosso', 'nossa', 'este', 'esta', 'esse', 'essa', 'aquele', 'aquela',
+        'isso', 'isto', 'aquilo', 'muito', 'mais', 'menos', 'já', 'não', 'sim', 'também', 'só',
+        'apenas', 'bem', 'mal', 'tão', 'então', 'assim', 'ao', 'aos', 'à', 'às', 'num', 'numa',
+      ]);
+
+      const BAD_TITLE = /\b(logo|icon|diagram|map|chart|flag|coat[ _]of[ _]arms|seal|screenshot|poster|cover|sign|plaque|stamp|banknote|coin|document|manuscript|graph|plot|scheme|symbol|clipart|banner|emblem)\b/i;
+
+      /* ------------------------------------------------------------------
+         Estado e referências
+         ------------------------------------------------------------------ */
+      const refs = {
+        sourceText: document.getElementById('sourceText'),
+        sourceCode: document.getElementById('sourceCode'),
+        sourceName: document.getElementById('sourceName'),
+        targetCode: document.getElementById('targetCode'),
+        targetName: document.getElementById('targetName'),
+        swapBtn: document.getElementById('swapBtn'),
+        editor: document.getElementById('editor'),
+        charCount: document.getElementById('charCount'),
+        clearBtn: document.getElementById('clearBtn'),
+        pasteBtn: document.getElementById('pasteBtn'),
+        exampleChips: document.getElementById('exampleChips'),
+        translateBtn: document.getElementById('translateBtn'),
+        btnLabel: document.getElementById('btnLabel'),
+        btnLoading: document.getElementById('btnLoading'),
+        resultCard: document.getElementById('resultCard'),
+        resultEmpty: document.getElementById('resultEmpty'),
+        resultLoading: document.getElementById('resultLoading'),
+        resultError: document.getElementById('resultError'),
+        resultErrorText: document.getElementById('resultErrorText'),
+        retryTranslateBtn: document.getElementById('retryTranslateBtn'),
+        resultContent: document.getElementById('resultContent'),
+        directionPill: document.getElementById('directionPill'),
+        translationText: document.getElementById('translationText'),
+        translationTime: document.getElementById('translationTime'),
+        copyBtn: document.getElementById('copyBtn'),
+        speakBtn: document.getElementById('speakBtn'),
+        imageSourceBadge: document.getElementById('imageSourceBadge'),
+        regenerateBtn: document.getElementById('regenerateBtn'),
+        imageLoading: document.getElementById('imageLoading'),
+        imageError: document.getElementById('imageError'),
+        imageErrorText: document.getElementById('imageErrorText'),
+        retryImageBtn: document.getElementById('retryImageBtn'),
+        imageReady: document.getElementById('imageReady'),
+        resultImage: document.getElementById('resultImage'),
+        imageCaption: document.getElementById('imageCaption'),
+        imageCredit: document.getElementById('imageCredit'),
+        expandImageBtn: document.getElementById('expandImageBtn'),
+        downloadImageBtn: document.getElementById('downloadImageBtn'),
+        lightbox: document.getElementById('lightbox'),
+        lightboxImage: document.getElementById('lightboxImage'),
+        lightboxCaption: document.getElementById('lightboxCaption'),
+        lightboxCredit: document.getElementById('lightboxCredit'),
+        closeLightboxBtn: document.getElementById('closeLightboxBtn'),
+        toastContainer: document.getElementById('toastContainer'),
+      };
+
+      const state = {
+        direction: 'en-pt',
+        translation: '',
+        sourceText: '',
+        translationMs: 0,
+        candidates: [],
+        candidateIndex: 0,
+        imageUrl: '',
+        imageSource: '',
+        imageCredit: '',
+        imageCreditUrl: '',
+        imageLicense: '',
+        query: '',
+        translateRequest: 0,
+        imageRequest: 0,
+        translateAbort: null,
+        imageAbort: null,
+        busy: false,
+        swapRotation: 0,
+        lastFocus: null,
+      };
+
+      let unsplashAvailable = null; // null = ainda não testado
+
+      /* ------------------------------------------------------------------
+         Inicialização
+         ------------------------------------------------------------------ */
+      function init() {
+        try {
+          const saved = localStorage.getItem('lumina.direction');
+          if (saved === 'en-pt' || saved === 'pt-en') state.direction = saved;
+        } catch (error) {
+          /* armazenamento indisponível */
+        }
+
+        setDirection(state.direction, { persist: false });
+        updateCharCount();
+        bindEvents();
+
+        if (state.direction === 'pt-en') {
+          state.swapRotation = 180;
+          refs.swapBtn.style.setProperty('--swap-rotation', '180deg');
+        }
+      }
+
+      function bindEvents() {
+        refs.translateBtn.addEventListener('click', handleTranslate);
+        refs.sourceText.addEventListener('input', updateCharCount);
+        refs.sourceText.addEventListener('keydown', (event) => {
+          if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+            event.preventDefault();
+            handleTranslate();
+          }
+        });
+
+        refs.swapBtn.addEventListener('click', handleSwap);
+        refs.clearBtn.addEventListener('click', handleClear);
+        refs.pasteBtn.addEventListener('click', handlePaste);
+        refs.copyBtn.addEventListener('click', copyTranslation);
+        refs.speakBtn.addEventListener('click', speakTranslation);
+        refs.regenerateBtn.addEventListener('click', regenerateImage);
+        refs.retryImageBtn.addEventListener('click', retryImage);
+        refs.retryTranslateBtn.addEventListener('click', handleTranslate);
+        refs.expandImageBtn.addEventListener('click', openLightbox);
+        refs.downloadImageBtn.addEventListener('click', downloadImage);
+        refs.closeLightboxBtn.addEventListener('click', closeLightbox);
+
+        refs.lightbox.addEventListener('click', (event) => {
+          if (event.target.matches('[data-close]')) closeLightbox();
+        });
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && !refs.lightbox.classList.contains('is-hidden')) {
+            closeLightbox();
+          }
+        });
+
+        refs.exampleChips.addEventListener('click', (event) => {
+          const button = event.target.closest('button[data-text]');
+          if (!button) return;
+          refs.sourceText.value = button.dataset.text;
+          updateCharCount();
+          handleTranslate();
+        });
+
+        window.addEventListener('offline', () => {
+          showToast('Você está offline. Verifique sua conexão.', 'error');
+        });
+
+        window.addEventListener('online', () => {
+          showToast('Conexão restabelecida.', 'success');
+        });
+      }
+
+      /* ------------------------------------------------------------------
+         Direção e interface
+         ------------------------------------------------------------------ */
+      function setDirection(direction, { persist = true } = {}) {
+        const [source, target] = direction.split('-');
+        if (!LANGS[source] || !LANGS[target]) return;
+
+        state.direction = direction;
+
+        refs.sourceCode.textContent = LANGS[source].short;
+        refs.sourceName.textContent = LANGS[source].name;
+        refs.targetCode.textContent = LANGS[target].short;
+        refs.targetName.textContent = LANGS[target].name;
+
+        refs.sourceText.placeholder = LANGS[source].placeholder;
+        refs.sourceText.setAttribute('aria-label', `Texto em ${LANGS[source].name}`);
+
+        refs.directionPill.textContent = `${LANGS[source].name} → ${LANGS[target].name}`;
+        refs.directionPill.setAttribute(
+          'aria-label',
+          `Tradução de ${LANGS[source].name} para ${LANGS[target].name}`
+        );
+
+        renderExamples(direction);
+
+        if (persist) {
+          try {
+            localStorage.setItem('lumina.direction', direction);
+          } catch (error) {
+            /* armazenamento indisponível */
+          }
+        }
+      }
+
+      function renderExamples(direction) {
+        refs.exampleChips.replaceChildren();
+
+        for (const text of EXAMPLES[direction]) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'example-chip';
+          button.dataset.text = text;
+          button.textContent = text;
+          button.title = `Traduzir “${text}”`;
+          refs.exampleChips.appendChild(button);
+        }
+      }
+
+      function handleSwap() {
+        const nextDirection = state.direction === 'en-pt' ? 'pt-en' : 'en-pt';
+        const carry = state.translation;
+
+        abortAll();
+        setDirection(nextDirection);
+
+        state.swapRotation += 180;
+        refs.swapBtn.style.setProperty('--swap-rotation', `${state.swapRotation}deg`);
+
+        if (carry) {
+          refs.sourceText.value = carry;
+          updateCharCount();
+          clearResult();
+          refs.sourceText.focus();
+        }
+      }
+
+      function updateCharCount() {
+        const length = refs.sourceText.value.length;
+        refs.charCount.textContent = `${length} / ${MAX_CHARS}`;
+        refs.charCount.classList.toggle('near-limit', length >= MAX_CHARS * 0.9);
+      }
+
+      function handleClear() {
+        abortAll();
+        refs.sourceText.value = '';
+        updateCharCount();
+        clearResult();
+        refs.sourceText.focus();
+      }
+
+      async function handlePaste() {
+        if (!navigator.clipboard || !navigator.clipboard.readText) {
+          showToast('Seu navegador não permite colar automaticamente. Use Ctrl + V.', 'info');
+          refs.sourceText.focus();
+          return;
+        }
+
+        try {
+          const text = await navigator.clipboard.readText();
+          if (!text.trim()) {
+            showToast('A área de transferência está vazia.', 'info');
+            return;
+          }
+          refs.sourceText.value = text.slice(0, MAX_CHARS);
+          updateCharCount();
+          refs.sourceText.focus();
+        } catch (error) {
+          showToast('Não foi possível acessar a área de transferência. Use Ctrl + V.', 'error');
+          refs.sourceText.focus();
+        }
+      }
+
+      /* ------------------------------------------------------------------
+         Tradução
+         ------------------------------------------------------------------ */
+      async function handleTranslate() {
+        const text = refs.sourceText.value.trim();
+
+        if (!text) {
+          refs.sourceText.focus();
+          refs.editor.classList.add('shake');
+          setTimeout(() => refs.editor.classList.remove('shake'), 450);
+          showToast('Digite uma palavra ou frase para traduzir.', 'info');
+          return;
+        }
+
+        state.translateAbort?.abort();
+        state.imageAbort?.abort();
+        state.translateAbort = null;
+        state.imageAbort = null;
+        state.imageRequest += 1;
+
+        const requestId = ++state.translateRequest;
+        const controller = new AbortController();
+        state.translateAbort = controller;
+        state.busy = true;
+
+        state.translation = '';
+        state.sourceText = text;
+        state.candidates = [];
+        state.candidateIndex = 0;
+        state.imageUrl = '';
+
+        setTranslateLoading(true);
+        showResultLoading();
+        clearImageState();
+
+        if (window.innerWidth < 1024) {
+          refs.resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        const started = performance.now();
+
+        try {
+          const translation = await translateText(text, state.direction, controller.signal);
+          if (requestId !== state.translateRequest) return;
+
+          const elapsed = performance.now() - started;
+          state.translation = translation;
+          state.translationMs = elapsed;
+
+          renderResult(translation, elapsed);
+          setTranslateLoading(false);
+
+          if (translation.toLowerCase() === text.toLowerCase()) {
+            showToast('O serviço manteve o texto original. Tente uma frase ou um sinônimo.', 'info');
+          }
+
+          generateImage(translation, text);
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+          if (requestId !== state.translateRequest) return;
+
+          console.error('Erro na tradução:', error);
+          setTranslateLoading(false);
+          showResultError(error.message || 'Não foi possível traduzir agora. Tente novamente.');
+          showToast(error.message || 'Não foi possível traduzir agora.', 'error');
+        } finally {
+          if (requestId === state.translateRequest) {
+            state.busy = false;
+            state.translateAbort = null;
+            setTranslateLoading(false);
+          }
+        }
+      }
+
+      async function translateText(text, direction, signal) {
+        const [source, target] = direction.split('-');
+        const langpair = `${LANGS[source].pair}|${LANGS[target].pair}`;
+        const chunks = splitIntoChunks(text, CHUNK_BYTES);
+        const parts = [];
+
+        for (const chunk of chunks) {
+          if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
+          parts.push(await translateChunk(chunk, langpair, signal));
+        }
+
+        return parts.join(' ').replace(/\s+/g, ' ').trim();
+      }
+
+      async function translateChunk(chunk, langpair, signal) {
+        const params = new URLSearchParams({ q: chunk, langpair });
+        const url = `${API.translate}?${params.toString()}`;
+
+        let response;
+        try {
+          response = await fetchWithTimeout(
+            url,
+            { signal, headers: { Accept: 'application/json' } },
+            20000
+          );
+        } catch (error) {
+          if (error.name === 'AbortError' || error.name === 'TimeoutError') throw error;
+          throw new Error('Não foi possível conectar ao MyMemory. Verifique sua internet e tente novamente.');
+        }
+
+        if (!response.ok) {
+          if (response.status === 429) {
+            throw new Error('O limite diário gratuito do MyMemory foi atingido. Tente novamente mais tarde.');
+          }
+          if (response.status >= 500) {
+            throw new Error('O MyMemory está instável no momento. Tente novamente em instantes.');
+          }
+          throw new Error('O MyMemory não conseguiu concluir a tradução agora. Tente novamente.');
+        }
+
+        let data;
+        try {
+          data = await response.json();
+        } catch (error) {
+          throw new Error('O MyMemory retornou uma resposta inválida. Tente novamente.');
+        }
+
+        const status = Number(data?.responseStatus);
+        const details = String(data?.responseDetails || '');
+        const quotaFinished = data?.quotaFinished === true || data?.quotaFinished === 'true';
+
+        if (quotaFinished || status === 429 || /ALL AVAILABLE FREE TRANSLATIONS|QUOTA/i.test(details)) {
+          throw new Error('O limite diário gratuito do MyMemory foi atingido. Tente novamente mais tarde.');
+        }
+
+        if (status !== 200) {
+          if (/PLEASE SELECT TWO DISTINCT LANGUAGES/i.test(details)) {
+            throw new Error('Selecione dois idiomas diferentes para traduzir.');
+          }
+          throw new Error(details || 'Não foi possível traduzir este texto. Tente reformular.');
+        }
+
+        const raw = String(data?.responseData?.translatedText || '');
+        const translated = decodeHtmlEntities(raw).replace(/\s+/g, ' ').trim();
+
+        if (!translated || /NO QUERY SPECIFIED|MYMEMORY WARNING/i.test(translated)) {
+          throw new Error('Não encontramos uma tradução para esse texto. Tente reformular.');
+        }
+
+        return translated;
+      }
+
+      /* ------------------------------------------------------------------
+         Resultado
+         ------------------------------------------------------------------ */
+      function setTranslateLoading(isLoading) {
+        refs.translateBtn.disabled = isLoading;
+        refs.translateBtn.setAttribute('aria-busy', String(isLoading));
+        refs.btnLabel.classList.toggle('is-hidden', isLoading);
+        refs.btnLoading.classList.toggle('is-hidden', !isLoading);
+        refs.btnLoading.classList.toggle('inline-flex', isLoading);
+      }
+
+      function showResultLoading() {
+        refs.resultEmpty.classList.add('is-hidden');
+        refs.resultError.classList.add('is-hidden');
+        refs.resultContent.classList.add('is-hidden');
+        refs.resultLoading.classList.remove('is-hidden');
+        refs.resultCard.setAttribute('aria-busy', 'true');
+      }
+
+      function renderResult(translation, elapsed) {
+        const [source, target] = state.direction.split('-');
+
+        refs.translationText.textContent = translation;
+        refs.directionPill.textContent = `${LANGS[source].name} → ${LANGS[target].name}`;
+        refs.translationTime.textContent = formatDuration(elapsed);
+
+        refs.resultLoading.classList.add('is-hidden');
+        refs.resultEmpty.classList.add('is-hidden');
+        refs.resultError.classList.add('is-hidden');
+        refs.resultContent.classList.remove('is-hidden');
+        refs.resultCard.setAttribute('aria-busy', 'false');
+        refs.regenerateBtn.disabled = false;
+        refs.imageSourceBadge.textContent = 'Buscando...';
+
+        refs.resultContent.classList.remove('result-enter');
+        void refs.resultContent.offsetWidth;
+        refs.resultContent.classList.add('result-enter');
+      }
+
+      function showResultError(message) {
+        refs.resultLoading.classList.add('is-hidden');
+        refs.resultEmpty.classList.add('is-hidden');
+        refs.resultContent.classList.add('is-hidden');
+        refs.resultError.classList.remove('is-hidden');
+        refs.resultErrorText.textContent = message;
+        refs.resultCard.setAttribute('aria-busy', 'false');
+      }
+
+      function clearResult() {
+        state.translation = '';
+        state.sourceText = '';
+        state.translationMs = 0;
+        state.candidates = [];
+        state.candidateIndex = 0;
+        state.imageUrl = '';
+        state.imageSource = '';
+        state.imageCredit = '';
+        state.imageCreditUrl = '';
+        state.imageLicense = '';
+
+        refs.resultContent.classList.add('is-hidden');
+        refs.resultError.classList.add('is-hidden');
+        refs.resultLoading.classList.add('is-hidden');
+        refs.resultEmpty.classList.remove('is-hidden');
+        refs.resultCard.setAttribute('aria-busy', 'false');
+
+        refs.imageReady.classList.add('is-hidden');
+        refs.imageError.classList.add('is-hidden');
+        refs.imageLoading.classList.add('is-hidden');
+        refs.resultImage.removeAttribute('src');
+        refs.regenerateBtn.disabled = true;
+        refs.imageSourceBadge.textContent = 'Aguardando tradução';
+      }
+
+      function formatDuration(ms) {
+        if (!Number.isFinite(ms) || ms <= 0) return '—';
+        if (ms < 1000) return 'menos de 1 s';
+        return `${(ms / 1000).toFixed(1).replace('.', ',')} s`;
+      }
+
+      async function copyTranslation() {
+        if (!state.translation) return;
+
+        try {
+          await navigator.clipboard.writeText(state.translation);
+          showToast('Tradução copiada para a área de transferência.', 'success');
+        } catch (error) {
+          const area = document.createElement('textarea');
+          area.value = state.translation;
+          area.setAttribute('readonly', '');
+          area.style.position = 'fixed';
+          area.style.opacity = '0';
+          document.body.appendChild(area);
+          area.select();
+
+          try {
+            document.execCommand('copy');
+            showToast('Tradução copiada.', 'success');
+          } catch (fallbackError) {
+            showToast('Não foi possível copiar. Selecione o texto manualmente.', 'error');
+          } finally {
+            area.remove();
+          }
+        }
+      }
+
+      function speakTranslation() {
+        if (!state.translation) return;
+
+        if (!('speechSynthesis' in window)) {
+          showToast('Seu navegador não suporta leitura em voz alta.', 'error');
+          return;
+        }
+
+        const target = state.direction.split('-')[1];
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(state.translation);
+        utterance.lang = LANGS[target].speech;
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+
+        refs.speakBtn.classList.add('speaking');
+        utterance.onend = utterance.onerror = () => refs.speakBtn.classList.remove('speaking');
+        window.speechSynthesis.speak(utterance);
+      }
+
+      /* ------------------------------------------------------------------
+         Imagem
+         ------------------------------------------------------------------ */
+      function clearImageState() {
+        refs.imageReady.classList.add('is-hidden');
+        refs.imageError.classList.add('is-hidden');
+        refs.imageLoading.classList.remove('is-hidden');
+        refs.resultImage.removeAttribute('src');
+        refs.regenerateBtn.disabled = true;
+        refs.imageSourceBadge.textContent = 'Buscando...';
+      }
+
+      async function generateImage(translation, original, { offset = 0 } = {}) {
+        const imgId = ++state.imageRequest;
+        state.imageAbort?.abort();
+
+        const controller = new AbortController();
+        state.imageAbort = controller;
+        const signal = controller.signal;
+
+        showImageLoading();
+
+        const queries = buildSearchQueries(translation, original);
+        state.query = queries[0] || cleanText(translation) || 'abstract';
+
+        try {
+          // 1. Unsplash Source (solicitado). O serviço legado pode estar fora do ar.
+          if (unsplashAvailable !== false) {
+            const url = `${API.unsplash}${encodeURIComponent(state.query)}&sig=${Date.now()}`;
+
+            try {
+              await preloadImage(url, 1800, signal);
+              if (imgId !== state.imageRequest) return;
+
+              unsplashAvailable = true;
+              state.candidates = [{
+                url,
+                source: 'Unsplash',
+                credit: 'Unsplash Source',
+                creditUrl: 'https://unsplash.com',
+                license: '',
+                licenseUrl: '',
+                title: state.query,
+                score: 0,
+              }];
+              state.candidateIndex = 0;
+              await showCandidate(0, imgId, signal);
+              return;
+            } catch (error) {
+              if (error.name === 'AbortError') throw error;
+              unsplashAvailable = false;
+            }
+          }
+
+          // 2. Wikimedia Commons (gratuito, sem chave, com CORS).
+          const candidates = await searchCommons(queries, signal, offset);
+          if (imgId !== state.imageRequest) return;
+
+          if (candidates.length) {
+            state.candidates = candidates;
+            state.candidateIndex = 0;
+            await showCandidate(0, imgId, signal);
+            return;
+          }
+
+          // 3. Picsum: garante uma imagem ilustrativa mesmo sem resultado semântico.
+          const seed = hashString(`${state.query}:${offset}`);
+          const url = `${API.picsum}${seed}/1200/675`;
+          await preloadImage(url, 15000, signal);
+          if (imgId !== state.imageRequest) return;
+
+          state.candidates = [{
+            url,
+            source: 'Picsum',
+            credit: 'Picsum Photos',
+            creditUrl: 'https://picsum.photos',
+            license: '',
+            licenseUrl: '',
+            title: state.query,
+            score: 0,
+          }];
+          state.candidateIndex = 0;
+          await showCandidate(0, imgId, signal);
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+          if (imgId !== state.imageRequest) return;
+          console.error('Erro na imagem:', error);
+          showImageError(error.message || 'Não foi possível carregar a imagem.');
+        } finally {
+          if (imgId === state.imageRequest) state.imageAbort = null;
+        }
+      }
+
+      function showImageLoading() {
+        refs.imageLoading.classList.remove('is-hidden');
+        refs.imageError.classList.add('is-hidden');
+        refs.imageReady.classList.add('is-hidden');
+        refs.imageSourceBadge.textContent = 'Buscando...';
+        refs.regenerateBtn.disabled = true;
+      }
+
+      function showImageError(message) {
+        refs.imageLoading.classList.add('is-hidden');
+        refs.imageReady.classList.add('is-hidden');
+        refs.imageError.classList.remove('is-hidden');
+        refs.imageErrorText.textContent = message;
+        refs.imageSourceBadge.textContent = 'Imagem indisponível';
+        refs.regenerateBtn.disabled = false;
+      }
+
+      async function showCandidate(index, imgId, signal) {
+        const candidate = state.candidates[index];
+        if (!candidate) return;
+
+        state.candidateIndex = index;
+        showImageLoading();
+        refs.imageSourceBadge.textContent = candidate.source;
+
+        try {
+          await preloadImage(candidate.url, 15000, signal);
+          if (imgId !== state.imageRequest) return;
+
+          state.imageUrl = candidate.url;
+          state.imageSource = candidate.source;
+          state.imageCredit = candidate.credit;
+          state.imageCreditUrl = candidate.creditUrl;
+          state.imageLicense = candidate.license;
+
+          refs.resultImage.src = candidate.url;
+          refs.resultImage.alt = `Imagem ilustrativa para “${state.translation}”`;
+          refs.imageCaption.textContent = truncate(state.translation, 70);
+          refs.imageCredit.textContent = creditText(candidate.credit, candidate.source, candidate.license);
+
+          const creditHref = safeUrl(candidate.creditUrl);
+          refs.imageCredit.href = creditHref || '#';
+          refs.imageCredit.classList.toggle('is-hidden', !creditHref);
+          refs.imageSourceBadge.textContent = candidate.source;
+
+          refs.imageLoading.classList.add('is-hidden');
+          refs.imageError.classList.add('is-hidden');
+          refs.imageReady.classList.remove('is-hidden');
+          refs.regenerateBtn.disabled = false;
+
+          refs.resultImage.style.opacity = '0';
+          requestAnimationFrame(() => {
+            refs.resultImage.style.opacity = '1';
+          });
+
+          const next = state.candidates[(index + 1) % state.candidates.length];
+          if (next && next.url !== candidate.url) {
+            const preload = new Image();
+            preload.src = next.url;
+          }
+        } catch (error) {
+          if (error.name === 'AbortError') return;
+          if (imgId !== state.imageRequest) return;
+          showImageError('A imagem não carregou. Tente regenerar.');
+        }
+      }
+
+      function regenerateImage() {
+        if (!state.translation) return;
+
+        if (state.candidates.length > 1) {
+          const next = (state.candidateIndex + 1) % state.candidates.length;
+          showCandidate(next, state.imageRequest, state.imageAbort?.signal);
+          return;
+        }
+
+        generateImage(state.translation, state.sourceText, {
+          offset: Math.floor(Math.random() * 24),
+        });
+      }
+
+      function retryImage() {
+        if (!state.translation) return;
+        generateImage(state.translation, state.sourceText, {
+          offset: Math.floor(Math.random() * 24),
+        });
+      }
+
+      async function searchCommons(queries, signal, offset = 0) {
+        const collected = [];
+        const lastError = [];
+
+        // Consulta as variações em paralelo: o Commons indexa título e descrição,
+        // então cada formulação pode revelar resultados diferentes.
+        const settled = await Promise.allSettled(
+          queries.map((query) => searchCommonsOnce(query, signal, offset))
+        );
+
+        settled.forEach((result, rank) => {
+          if (result.status === 'fulfilled') {
+            for (const item of result.value) {
+              collected.push({ ...item, score: item.score + Math.max(0, 3 - rank) * 3 });
+            }
+          } else if (result.reason?.name === 'AbortError') {
+            throw result.reason;
+          } else {
+            lastError.push(result.reason);
+          }
+        });
+
+        const unique = [];
+        const seen = new Set();
+
+        for (const item of collected) {
+          // Evita recortes do mesmo arquivo (ex.: tiles "-x0-y1" do Google Art Project).
+          const key = item.title.replace(/-x\d+-y\d+/gi, '').toLowerCase();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          unique.push(item);
+        }
+
+        unique.sort((a, b) => b.score - a.score);
+
+        if (unique.length) return unique.slice(0, 8);
+        if (lastError.length === queries.length && lastError[0]) throw lastError[0];
+        return [];
+      }
+
+      async function searchCommonsOnce(query, signal, offset = 0) {
+        const params = new URLSearchParams({
+          action: 'query',
+          format: 'json',
+          origin: '*',
+          generator: 'search',
+          gsrsearch: `filetype:bitmap ${query}`,
+          gsrnamespace: '6',
+          gsrlimit: '24',
+          prop: 'imageinfo',
+          iiprop: 'url|mime|size|extmetadata',
+          iiextmetadatafilter: 'Artist|LicenseShortName|LicenseUrl|Credit',
+          iiurlwidth: '1400',
+        });
+
+        if (offset > 0) params.set('gsroffset', String(offset));
+
+        const response = await fetchWithTimeout(`${API.commons}?${params.toString()}`, { signal }, 15000);
+        if (!response.ok) throw new Error('Não foi possível buscar imagens agora.');
+
+        let data;
+        try {
+          data = await response.json();
+        } catch (error) {
+          throw new Error('A busca de imagens retornou uma resposta inválida.');
+        }
+
+        const pages = Object.values(data?.query?.pages || {}).sort(
+          (a, b) => (a.index || 0) - (b.index || 0)
+        );
+        const tokens = query.toLowerCase().split(/\s+/).filter((token) => token.length > 2);
+        const candidates = [];
+
+        for (const page of pages) {
+          const info = page?.imageinfo?.[0];
+          if (!info) continue;
+          if (!/^image\/(jpeg|png|webp)$/i.test(info.mime || '')) continue;
+
+          const width = Number(info.width) || 0;
+          const height = Number(info.height) || 0;
+          if (width < 640 || height < 460) continue;
+
+          const ratio = width / height;
+          if (ratio < 0.5 || ratio > 3.2) continue;
+
+          const title = String(page.title || '').replace(/^File:/i, '');
+          if (BAD_TITLE.test(title)) continue;
+
+          const url = safeUrl(info.thumburl || info.url);
+          if (!url) continue;
+
+          const meta = info.extmetadata || {};
+          const artist = stripHtml(meta.Artist?.value || meta.Credit?.value || '');
+          const license = stripHtml(meta.LicenseShortName?.value || '');
+          const licenseUrl = safeUrl(meta.LicenseUrl?.value || '');
+
+          let score = 0;
+          const lowerTitle = title.toLowerCase();
+          for (const token of tokens) {
+            if (lowerTitle.includes(token)) score += 4;
+          }
+          if (lowerTitle.includes(query.toLowerCase())) score += 6;
+          if (ratio >= 1.2 && ratio <= 2.0) score += 2;
+          if (width >= 1200) score += 1;
+          if (/photo|painting|art|illustration|landscape/i.test(title)) score += 1;
+
+          candidates.push({
+            url,
+            source: 'Wikimedia Commons',
+            title,
+            credit: artist || 'Wikimedia Commons',
+            creditUrl: safeUrl(info.descriptionurl) || `https://commons.wikimedia.org/wiki/${encodeURIComponent(page.title || '')}`,
+            license,
+            licenseUrl,
+            score,
+          });
+        }
+
+        return candidates;
+      }
+
+      function buildSearchQueries(translation, original) {
+        const queries = [];
+        const add = (value) => {
+          const query = cleanText(value);
+          if (query.length < 2) return;
+          if (queries.some((existing) => existing.toLowerCase() === query.toLowerCase())) return;
+          queries.push(query);
+        };
+
+        const translated = cleanText(translation);
+        const source = cleanText(original);
+        const [sourceLang] = state.direction.split('-');
+
+        // O Wikimedia Commons é indexado majoritariamente em inglês:
+        // priorize o lado inglês do par, seja ele o original ou a tradução.
+        const englishTerm = sourceLang === 'en' ? source : translated;
+        const localTerm = sourceLang === 'en' ? translated : source;
+
+        const englishKeywords = extractKeywords(englishTerm);
+        const localKeywords = extractKeywords(localTerm);
+
+        // Frases longas rendem buscas melhores pelas palavras-chave;
+        // termos curtos funcionam melhor exatamente como escritos.
+        const isShort = englishTerm.split(' ').length <= 3;
+        if (isShort) add(englishTerm);
+        add(englishKeywords);
+        if (!isShort) add(englishTerm);
+        if (localTerm.length <= 80) add(localTerm);
+        add(localKeywords);
+
+        return queries.slice(0, 3);
+      }
+
+      function extractKeywords(text) {
+        return cleanText(text)
+          .toLowerCase()
+          .split(' ')
+          .filter((word) => word.length > 2 && !STOPWORDS.has(word))
+          .slice(0, 3)
+          .join(' ');
+      }
+
+      /* ------------------------------------------------------------------
+         Utilidades
+         ------------------------------------------------------------------ */
+      function splitIntoChunks(text, maxBytes) {
+        const encoder = new TextEncoder();
+        const byteLength = (value) => encoder.encode(value).length;
+
+        const chunks = [];
+        let remaining = text.trim();
+
+        while (remaining) {
+          if (byteLength(remaining) <= maxBytes) {
+            chunks.push(remaining);
+            break;
+          }
+
+          let cut = remaining.length;
+          while (cut > 0 && byteLength(remaining.slice(0, cut)) > maxBytes) cut -= 1;
+          if (cut === 0) cut = 1;
+
+          const windowText = remaining.slice(0, cut);
+          const match = windowText.match(/[\s,.;:!?…—–][^\s,.;:!?…—–]*$/);
+          let splitAt = match ? match.index + 1 : cut;
+          if (splitAt < cut * 0.5) splitAt = cut;
+
+          const piece = remaining.slice(0, splitAt).trim();
+          if (piece) chunks.push(piece);
+          remaining = remaining.slice(splitAt).trim();
+        }
+
+        return chunks.length ? chunks : [text.trim()];
+      }
+
+      async function fetchWithTimeout(url, options = {}, timeoutMs = 20000) {
+        const controller = new AbortController();
+        const externalSignal = options.signal;
+        let timedOut = false;
+        let timer;
+
+        const onExternalAbort = () => controller.abort();
+
+        if (externalSignal) {
+          if (externalSignal.aborted) controller.abort();
+          else externalSignal.addEventListener('abort', onExternalAbort, { once: true });
+        }
+
+        timer = setTimeout(() => {
+          timedOut = true;
+          controller.abort();
+        }, timeoutMs);
+
+        try {
+          return await fetch(url, { ...options, signal: controller.signal });
+        } catch (error) {
+          if (timedOut) {
+            const timeoutError = new Error('A resposta demorou demais. Tente novamente.');
+            timeoutError.name = 'TimeoutError';
+            throw timeoutError;
+          }
+          throw error;
+        } finally {
+          clearTimeout(timer);
+          externalSignal?.removeEventListener('abort', onExternalAbort);
+        }
+      }
+
+      function preloadImage(url, timeoutMs = 15000, signal) {
+        return new Promise((resolve, reject) => {
+          if (signal?.aborted) {
+            reject(new DOMException('Aborted', 'AbortError'));
+            return;
+          }
+
+          const image = new Image();
+          let settled = false;
+          let timer;
+
+          const cleanup = () => {
+            clearTimeout(timer);
+            image.onload = null;
+            image.onerror = null;
+            signal?.removeEventListener('abort', onAbort);
+          };
+
+          const finish = (callback, value) => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            callback(value);
+          };
+
+          const onAbort = () => {
+            image.src = '';
+            finish(reject, new DOMException('Aborted', 'AbortError'));
+          };
+
+          timer = setTimeout(() => {
+            finish(reject, new Error('A imagem demorou demais para carregar.'));
+          }, timeoutMs);
+
+          signal?.addEventListener('abort', onAbort, { once: true });
+
+          image.onload = () => finish(resolve, url);
+          image.onerror = () => finish(reject, new Error('A imagem não pôde ser carregada.'));
+          image.src = url;
+        });
+      }
+
+      function decodeHtmlEntities(value) {
+        const area = document.createElement('textarea');
+        area.innerHTML = String(value);
+        return area.value;
+      }
+
+      function stripHtml(value) {
+        const area = document.createElement('div');
+        area.innerHTML = String(value);
+        return (area.textContent || '').replace(/\s+/g, ' ').trim();
+      }
+
+      function cleanText(value) {
+        return String(value)
+          .replace(/["“”'‘’«»]/g, ' ')
+          .replace(/[.,;:!?()[\]{}…—–-]+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function truncate(value, max) {
+        const text = String(value || '');
+        if (text.length <= max) return text;
+        return `${text.slice(0, Math.max(0, max - 1)).trimEnd()}…`;
+      }
+
+      function creditText(credit, source, license) {
+        const who = truncate(credit || source || 'Acervo público', 60);
+        return license ? `Foto: ${who} · ${license}` : `Foto: ${who}`;
+      }
+
+      function safeUrl(value) {
+        try {
+          const url = new URL(String(value), window.location.href);
+          return /^https?:$/.test(url.protocol) ? url.href : '';
+        } catch (error) {
+          return '';
+        }
+      }
+
+      function hashString(value) {
+        let hash = 2166136261;
+        for (let index = 0; index < value.length; index += 1) {
+          hash ^= value.charCodeAt(index);
+          hash = Math.imul(hash, 16777619);
+        }
+        return Math.abs(hash) % 100000;
+      }
+
+      function slugify(value) {
+        return String(value)
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+          .slice(0, 40) || 'imagem';
+      }
+
+      function abortAll() {
+        state.translateAbort?.abort();
+        state.imageAbort?.abort();
+        state.translateAbort = null;
+        state.imageAbort = null;
+        state.translateRequest += 1;
+        state.imageRequest += 1;
+        state.busy = false;
+        setTranslateLoading(false);
+      }
+
+      /* ------------------------------------------------------------------
+         Download e lightbox
+         ------------------------------------------------------------------ */
+      async function downloadImage() {
+        if (!state.imageUrl) return;
+
+        const filename = `lumina-${slugify(state.translation || 'imagem')}.jpg`;
+
+        try {
+          const response = await fetch(state.imageUrl, { mode: 'cors' });
+          if (!response.ok) throw new Error('download failed');
+
+          const blob = await response.blob();
+          const objectUrl = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+
+          link.href = objectUrl;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
+          showToast('Imagem baixada.', 'success');
+        } catch (error) {
+          window.open(state.imageUrl, '_blank', 'noopener,noreferrer');
+          showToast('Abrimos a imagem em uma nova aba para você salvar.', 'info');
+        }
+      }
+
+      function openLightbox() {
+        if (!state.imageUrl) return;
+
+        state.lastFocus = document.activeElement;
+        refs.lightboxImage.src = state.imageUrl;
+        refs.lightboxImage.alt = `Imagem ilustrativa para “${state.translation}”`;
+        refs.lightboxCaption.textContent = state.translation;
+        refs.lightboxCredit.textContent = creditText(state.imageCredit, state.imageSource, state.imageLicense);
+
+        const creditHref = safeUrl(state.imageCreditUrl);
+        refs.lightboxCredit.href = creditHref || '#';
+        refs.lightboxCredit.classList.toggle('is-hidden', !creditHref);
+
+        refs.lightbox.classList.remove('is-hidden');
+        document.body.classList.add('no-scroll');
+        refs.closeLightboxBtn.focus();
+      }
+
+      function closeLightbox() {
+        refs.lightbox.classList.add('is-hidden');
+        refs.lightboxImage.removeAttribute('src');
+        document.body.classList.remove('no-scroll');
+
+        if (state.lastFocus instanceof HTMLElement) state.lastFocus.focus();
+      }
+
+      /* ------------------------------------------------------------------
+         Toasts
+         ------------------------------------------------------------------ */
+      function showToast(message, type = 'info') {
+        while (refs.toastContainer.children.length >= 3) {
+          refs.toastContainer.firstElementChild.remove();
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+
+        const icon = type === 'success'
+          ? 'fa-circle-check'
+          : type === 'error'
+            ? 'fa-circle-exclamation'
+            : 'fa-circle-info';
+
+        toast.innerHTML = `<i class="fa-solid ${icon}" aria-hidden="true"></i><p></p><button type="button" aria-label="Fechar aviso"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>`;
+        toast.querySelector('p').textContent = message;
+
+        const remove = () => {
+          if (!toast.isConnected) return;
+          toast.classList.add('leaving');
+          setTimeout(() => toast.remove(), 250);
+        };
+
+        toast.querySelector('button').addEventListener('click', remove);
+        refs.toastContainer.appendChild(toast);
+
+        let timer = setTimeout(remove, 4500);
+        toast.addEventListener('mouseenter', () => clearTimeout(timer));
+        toast.addEventListener('mouseleave', () => {
+          timer = setTimeout(remove, 1800);
+        });
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
