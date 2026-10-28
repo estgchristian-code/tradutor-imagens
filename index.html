@@ -722,13 +722,14 @@
     }
 
     /* ---------- Image ---------- */
-    .image-frame {
+    .concept-frame {
       position: relative;
       overflow: hidden;
       aspect-ratio: 16 / 9;
       border-radius: 18px;
       border: 1px solid rgba(255, 255, 255, 0.09);
       background: #070a16;
+      box-shadow: 0 22px 50px -30px rgba(0, 0, 0, 0.9);
     }
 
     .image-skeleton {
@@ -769,14 +770,23 @@
       font-size: 11.5px;
     }
 
-    #resultImage {
+    .concept-card {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: scale(0.985);
+      transition: opacity 0.45s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .concept-card.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .concept-card svg {
       width: 100%;
       height: 100%;
-      object-fit: cover;
       display: block;
-      opacity: 0;
-      transition: opacity 0.55s ease, transform 0.9s ease;
-      transform: scale(1.02);
     }
 
     .image-overlay {
@@ -795,16 +805,10 @@
       pointer-events: auto;
     }
 
-    .image-credit {
+    .card-caption {
       font-size: 9.5px;
       color: #cbd5e1;
-      text-decoration: none;
-      border-bottom: 1px dotted rgba(255, 255, 255, 0.25);
       max-width: 100%;
-    }
-
-    .image-credit:hover {
-      color: #fff;
     }
 
     .image-action {
@@ -1012,12 +1016,19 @@
       animation: lightbox-in 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .lightbox-panel img {
-      width: 100%;
-      max-height: 78vh;
-      object-fit: contain;
+    .lightbox-card {
+      display: grid;
+      place-items: center;
       background: #02040a;
+      padding: 10px;
+    }
+
+    .lightbox-card svg {
+      width: 100%;
+      height: auto;
+      max-height: 76vh;
       display: block;
+      border-radius: 12px;
     }
 
     .lightbox-footer {
@@ -1133,24 +1144,24 @@
       <div class="reveal reveal-1">
         <span class="hero-badge">
           <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
-          Tradução + significado visual
+          Tradução + cartão conceitual
         </span>
       </div>
 
       <h1 class="hero-title reveal reveal-1 mx-auto mt-6 max-w-4xl text-white">
-        Cada palavra ganha
-        <span class="gradient-text">uma imagem.</span>
+        Cada palavra vira
+        <span class="gradient-text">um cartão.</span>
       </h1>
 
       <p class="reveal reveal-2 mx-auto mt-5 max-w-2xl text-[13.5px] leading-7 text-slate-400 sm:text-[15px]">
-        Traduza entre inglês e português e veja o sentido ganhar forma com uma imagem ilustrativa.
+        Traduza entre inglês e português e veja o conceito virar um cartão vetorial, desenhado na hora.
         Sem chaves, sem cadastro, sem custo.
       </p>
 
       <div class="reveal reveal-3 mt-7 flex flex-wrap items-center justify-center gap-2.5">
         <span class="trust-chip"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Resposta em segundos</span>
         <span class="trust-chip"><i class="fa-solid fa-lock-open" aria-hidden="true"></i> Sem chave de API</span>
-        <span class="trust-chip"><i class="fa-solid fa-earth-americas" aria-hidden="true"></i> APIs públicas</span>
+        <span class="trust-chip"><i class="fa-solid fa-shapes" aria-hidden="true"></i> Cartões gerados localmente</span>
       </div>
     </section>
 
@@ -1258,7 +1269,7 @@
                 </div>
                 <div>
                   <h2 class="text-base font-semibold text-white">Resultado</h2>
-                  <p class="text-[11px] text-slate-500">Tradução e significado visual</p>
+                  <p class="text-[11px] text-slate-500">Tradução e cartão conceitual</p>
                 </div>
               </div>
               <span class="mini-badge">
@@ -1275,11 +1286,11 @@
                 </div>
                 <h3 class="mt-7 text-lg font-semibold text-white">Pronto para traduzir</h3>
                 <p class="mt-2 max-w-[300px] text-[12.5px] leading-6 text-slate-500">
-                  Digite uma palavra ou frase ao lado. A tradução e uma imagem ilustrativa aparecerão aqui.
+                  Digite uma palavra ou frase ao lado. A tradução e um cartão conceitual aparecerão aqui.
                 </p>
                 <div class="mt-6 flex flex-wrap items-center justify-center gap-2">
                   <span class="mini-pill"><i class="fa-solid fa-bolt" aria-hidden="true"></i> Rápido</span>
-                  <span class="mini-pill"><i class="fa-solid fa-image" aria-hidden="true"></i> Visual</span>
+                  <span class="mini-pill"><i class="fa-solid fa-shapes" aria-hidden="true"></i> Vetorial</span>
                   <span class="mini-pill"><i class="fa-solid fa-lock-open" aria-hidden="true"></i> Grátis</span>
                 </div>
               </div>
@@ -1347,23 +1358,30 @@
                   <div class="flex items-center justify-between gap-3">
                     <div class="flex min-w-0 items-center gap-2.5">
                       <div class="icon-tile small violet">
-                        <i class="fa-solid fa-image" aria-hidden="true"></i>
+                        <i class="fa-solid fa-shapes" aria-hidden="true"></i>
                       </div>
                       <div class="min-w-0">
-                        <h3 class="text-[13px] font-semibold text-white">Significado visual</h3>
-                        <p id="imageSourceBadge" class="truncate text-[10px] text-slate-500">Aguardando tradução</p>
+                        <h3 class="text-[13px] font-semibold text-white">Cartão conceitual</h3>
+                        <p id="conceptBadge" class="truncate text-[10px] text-slate-500">Aguardando tradução</p>
                       </div>
                     </div>
-                    <button id="regenerateBtn" type="button" class="secondary-btn" disabled>
-                      <i class="fa-solid fa-rotate-right" aria-hidden="true"></i>
-                      <span class="hidden sm:inline">Regenerar</span>
-                    </button>
+                    <div class="flex flex-none items-center gap-2">
+                      <button id="aiBtn" type="button" class="secondary-btn" disabled title="Gerar ilustração com IA (Pollinations)">
+                        <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+                        <span class="hidden sm:inline" data-ai-label>Gerar com IA</span>
+                        <span class="sm:hidden" data-ai-label>IA</span>
+                      </button>
+                      <button id="regenerateBtn" type="button" class="secondary-btn" disabled title="Trocar composição do cartão">
+                        <i class="fa-solid fa-shuffle" aria-hidden="true"></i>
+                        <span class="hidden sm:inline">Regenerar</span>
+                      </button>
+                    </div>
                   </div>
 
-                  <div class="image-frame mt-3">
-                    <div id="imageLoading" class="image-skeleton">
+                  <div class="concept-frame mt-3">
+                    <div id="cardSkeleton" class="image-skeleton">
                       <div class="spinner large" aria-hidden="true"></div>
-                      <p>Buscando uma imagem que combine...</p>
+                      <p>Desenhando o cartão...</p>
                       <div class="flex gap-1.5 opacity-40" aria-hidden="true">
                         <span class="h-1 w-1 rounded-full bg-indigo-300"></span>
                         <span class="h-1 w-1 rounded-full bg-violet-300"></span>
@@ -1371,28 +1389,17 @@
                       </div>
                     </div>
 
-                    <div id="imageError" class="is-hidden image-error">
-                      <div class="icon-tile small">
-                        <i class="fa-solid fa-image" aria-hidden="true"></i>
-                      </div>
-                      <p id="imageErrorText">Não foi possível carregar a imagem.</p>
-                      <button id="retryImageBtn" type="button" class="secondary-btn">
-                        <i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Tentar novamente
-                      </button>
-                    </div>
-
-                    <div id="imageReady" class="is-hidden absolute inset-0">
-                      <img id="resultImage" alt="" decoding="async" />
+                    <div id="cardReady" class="is-hidden absolute inset-0">
+                      <div id="conceptCard" class="concept-card"></div>
                       <div class="image-overlay">
                         <div class="min-w-0">
-                          <p id="imageCaption" class="truncate text-[12px] font-semibold text-white"></p>
-                          <a id="imageCredit" class="image-credit mt-0.5 inline-block max-w-full truncate" href="#" target="_blank" rel="noopener noreferrer"></a>
+                          <p id="cardCaption" class="card-caption truncate"></p>
                         </div>
                         <div class="flex flex-none gap-1.5">
-                          <button id="expandImageBtn" type="button" class="image-action" aria-label="Ampliar imagem" title="Ampliar">
+                          <button id="expandImageBtn" type="button" class="image-action" aria-label="Ampliar cartão" title="Ampliar">
                             <i class="fa-solid fa-expand" aria-hidden="true"></i>
                           </button>
-                          <button id="downloadImageBtn" type="button" class="image-action" aria-label="Baixar imagem" title="Baixar">
+                          <button id="downloadImageBtn" type="button" class="image-action" aria-label="Baixar cartão em SVG" title="Baixar SVG">
                             <i class="fa-solid fa-download" aria-hidden="true"></i>
                           </button>
                         </div>
@@ -1400,9 +1407,11 @@
                     </div>
                   </div>
 
+                  <p id="aiStatus" class="mt-2 text-[10px] leading-4 text-slate-500 is-hidden" role="status" aria-live="polite"></p>
+
                   <p class="mt-2.5 text-[10px] leading-4 text-slate-600">
                     <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
-                    Imagem ilustrativa escolhida a partir do termo traduzido. Use “Regenerar” para ver outras opções.
+                    Imagem pesquisada no Wikimedia Commons ou gerada sob demanda com IA. Sem resultado, o cartão é desenhado localmente em SVG.
                   </p>
                 </div>
               </div>
@@ -1418,7 +1427,7 @@
         <p class="text-[10px] font-bold uppercase tracking-[0.22em] text-indigo-400">Além da tradução</p>
         <h2 class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">Entenda o que as palavras carregam.</h2>
         <p class="mt-3 text-[13px] leading-6 text-slate-400">
-          Uma camada visual para ajudar a memorizar, contextualizar e sentir o significado — usando apenas serviços abertos.
+          Uma camada visual para ajudar a memorizar, contextualizar e sentir o significado — desenhada no próprio navegador.
         </p>
       </div>
 
@@ -1432,10 +1441,10 @@
         </article>
 
         <article class="feature-card">
-          <div class="feature-icon"><i class="fa-solid fa-image" aria-hidden="true"></i></div>
-          <h3 class="mt-4 text-[13.5px] font-semibold text-white">Imagem que acompanha</h3>
+          <div class="feature-icon"><i class="fa-solid fa-shapes" aria-hidden="true"></i></div>
+          <h3 class="mt-4 text-[13.5px] font-semibold text-white">Cartão que acompanha</h3>
           <p class="mt-2 text-[11.5px] leading-5 text-slate-500">
-            Buscamos uma foto relacionada ao termo em acervos públicos e gratuitos, com alternativas para regenerar.
+            O termo é classificado por conceito (amor, café, coragem, tecnologia…) e vira um cartão vetorial com ícone, gradiente e tipografia.
           </p>
         </article>
 
@@ -1451,7 +1460,7 @@
           <div class="feature-icon"><i class="fa-solid fa-code" aria-hidden="true"></i></div>
           <h3 class="mt-4 text-[13.5px] font-semibold text-white">Um único arquivo</h3>
           <p class="mt-2 text-[11.5px] leading-5 text-slate-500">
-            HTML, CSS e JavaScript juntos. Fácil de hospedar, editar, versionar e compartilhar.
+            HTML, CSS e JavaScript juntos — e os cartões são SVG gerados localmente, sem baixar imagens.
           </p>
         </article>
       </div>
@@ -1469,7 +1478,7 @@
           <div>
             <p class="text-[13px] font-semibold text-white">Lumina</p>
             <p class="mt-1 max-w-xs text-[11px] leading-5 text-slate-500">
-              Tradução e imagens com APIs públicas e gratuitas. Feito para demonstrar o poder de serviços abertos.
+              Tradução com API pública e cartões conceituais vetoriais desenhados no navegador.
             </p>
           </div>
         </div>
@@ -1478,21 +1487,18 @@
           <a href="https://mymemory.translated.net" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
             MyMemory <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
           </a>
-          <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
-            Unsplash <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
+          <a href="https://tailwindcss.com" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
+            Tailwind CSS <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
           </a>
-          <a href="https://commons.wikimedia.org" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
-            Wikimedia Commons <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
-          </a>
-          <a href="https://picsum.photos" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
-            Picsum <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
+          <a href="https://fontawesome.com" target="_blank" rel="noopener noreferrer" class="transition hover:text-slate-200">
+            Font Awesome <i class="fa-solid fa-arrow-up-right-from-square ml-0.5 text-[8px]" aria-hidden="true"></i>
           </a>
         </nav>
       </div>
 
       <div class="mt-8 border-t border-white/[0.06] pt-5 text-[10.5px] leading-5 text-slate-600">
         <p>Traduções automáticas podem conter imprecisões. O MyMemory limita o uso anônimo a 5.000 caracteres por dia por IP.</p>
-        <p class="mt-1">O Unsplash Source foi descontinuado; quando ele não responde, buscamos imagens no Wikimedia Commons automaticamente.</p>
+        <p class="mt-1">As imagens ilustrativas são pesquisadas no Wikimedia Commons; quando não há resultado, o cartão é desenhado localmente em SVG.</p>
       </div>
     </div>
   </footer>
@@ -1504,13 +1510,20 @@
   <div id="lightbox" class="lightbox is-hidden" role="dialog" aria-modal="true" aria-labelledby="lightboxCaption">
     <div class="lightbox-backdrop" data-close></div>
     <div class="lightbox-panel">
-      <button id="closeLightboxBtn" type="button" class="lightbox-close" aria-label="Fechar imagem ampliada">
+      <button id="closeLightboxBtn" type="button" class="lightbox-close" aria-label="Fechar cartão ampliado">
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
-      <img id="lightboxImage" alt="" />
+      <div id="lightboxCard" class="lightbox-card"></div>
       <div class="lightbox-footer">
         <p id="lightboxCaption" class="min-w-0 truncate text-[12px] font-semibold text-white"></p>
-        <a id="lightboxCredit" class="image-credit flex-none" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <div class="flex flex-none items-center gap-1.5">
+          <button id="downloadPngBtn" type="button" class="secondary-btn" title="Baixar como imagem PNG">
+            <i class="fa-solid fa-file-image" aria-hidden="true"></i> PNG
+          </button>
+          <button id="downloadSvgBtn" type="button" class="secondary-btn" title="Baixar como vetor SVG">
+            <i class="fa-solid fa-bezier-curve" aria-hidden="true"></i> SVG
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1524,9 +1537,6 @@
          ------------------------------------------------------------------ */
       const API = {
         translate: 'https://api.mymemory.translated.net/get',
-        commons: 'https://commons.wikimedia.org/w/api.php',
-        unsplash: 'https://source.unsplash.com/featured/?',
-        picsum: 'https://picsum.photos/seed/',
       };
 
       const LANGS = {
@@ -1554,25 +1564,486 @@
       const MAX_CHARS = 1000;
       const CHUNK_BYTES = 480;
 
-      const STOPWORDS = new Set([
-        'the', 'a', 'an', 'of', 'to', 'in', 'on', 'at', 'for', 'and', 'or', 'but', 'is', 'are',
-        'was', 'were', 'be', 'been', 'being', 'with', 'by', 'from', 'as', 'that', 'this', 'it',
-        'its', 'you', 'your', 'he', 'she', 'they', 'we', 'i', 'me', 'my', 'our', 'their', 'his',
-        'her', 'not', 'no', 'do', 'does', 'did', 'have', 'has', 'had', 'will', 'would', 'can',
-        'could', 'should', 'may', 'might', 'must', 'very', 'just', 'so', 'than', 'then', 'there',
-        'here', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most',
-        'other', 'some', 'such', 'only', 'own', 'same', 'too', 'also', 'into', 'over', 'under',
-        'again', 'once', 'about', 'after', 'before', 'between', 'through', 'during', 'without',
-        'o', 'a', 'os', 'as', 'um', 'uma', 'uns', 'umas', 'de', 'do', 'da', 'dos', 'das', 'em',
-        'no', 'na', 'nos', 'nas', 'por', 'pelo', 'pela', 'para', 'com', 'sem', 'sob', 'sobre',
-        'entre', 'e', 'ou', 'mas', 'que', 'se', 'como', 'quando', 'onde', 'porque', 'pois', 'é',
-        'são', 'foi', 'foram', 'ser', 'estar', 'está', 'estão', 'tem', 'têm', 'ter', 'há', 'meu',
-        'minha', 'seu', 'sua', 'nosso', 'nossa', 'este', 'esta', 'esse', 'essa', 'aquele', 'aquela',
-        'isso', 'isto', 'aquilo', 'muito', 'mais', 'menos', 'já', 'não', 'sim', 'também', 'só',
-        'apenas', 'bem', 'mal', 'tão', 'então', 'assim', 'ao', 'aos', 'à', 'às', 'num', 'numa',
-      ]);
+      /* ------------------------------------------------------------------
+         Cartões conceituais — ícones vetoriais (viewBox 100 × 100)
+         ------------------------------------------------------------------ */
+      const stroke = (inner, width = 5) =>
+        `<g fill="none" stroke="currentColor" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round">${inner}</g>`;
 
-      const BAD_TITLE = /\b(logo|icon|diagram|map|chart|flag|coat[ _]of[ _]arms|seal|screenshot|poster|cover|sign|plaque|stamp|banknote|coin|document|manuscript|graph|plot|scheme|symbol|clipart|banner|emblem)\b/i;
+      const solid = (inner) => `<g fill="currentColor" stroke="none">${inner}</g>`;
+
+      const ICONS = {
+        heart: solid('<path d="M50 82C20 62 10 44 18 32c8-12 26-10 32 4 6-14 24-16 32-4 8 12-2 30-32 50z"/>'),
+
+        people: stroke(`
+          <circle cx="34" cy="34" r="12"/>
+          <circle cx="68" cy="38" r="9"/>
+          <path d="M12 80a22 22 0 0 1 44 0"/>
+          <path d="M54 78a18 18 0 0 1 34-4"/>
+        `),
+
+        home: stroke(`
+          <path d="M16 48 50 18l34 30"/>
+          <path d="M26 42v40h48V42"/>
+          <path d="M42 82V58h16v24"/>
+        `),
+
+        coffee: stroke(`
+          <path d="M24 40h42v22a18 18 0 0 1-18 18h-6a18 18 0 0 1-18-18z"/>
+          <path d="M66 46h7a10 10 0 0 1 0 20h-7"/>
+          <path d="M34 28c0-6 6-6 6-12M48 28c0-6 6-6 6-12"/>
+          <path d="M20 88h52"/>
+        `),
+
+        bowl: stroke(`
+          <path d="M14 50h72a36 36 0 0 1-72 0z"/>
+          <path d="M34 38c0-8 6-10 6-18M50 36c0-8 6-10 6-18M66 38c0-8 6-10 6-18"/>
+        `),
+
+        chip: stroke(`
+          <rect x="28" y="28" width="44" height="44" rx="10"/>
+          <rect x="43" y="43" width="14" height="14" rx="3"/>
+          <path d="M40 16v12M60 16v12M40 72v12M60 72v12M16 40h12M16 60h12M72 40h12M72 60h12"/>
+        `),
+
+        clock: stroke(`
+          <circle cx="50" cy="50" r="34"/>
+          <path d="M50 28v23l16 10"/>
+        `),
+
+        rain: `${solid(`
+          <circle cx="36" cy="46" r="15"/>
+          <circle cx="55" cy="38" r="19"/>
+          <circle cx="72" cy="47" r="13"/>
+          <rect x="36" y="42" width="36" height="20" rx="9"/>
+        `)}${stroke('<path d="M34 76l-6 12M52 76l-6 12M70 76l-6 12"/>')}`,
+
+        sun: stroke(`
+          <circle cx="50" cy="50" r="20"/>
+          <path d="M50 8v10M50 82v10M8 50h10M82 50h10M20 20l7 7M73 73l7 7M80 20l-7 7M27 73l-7 7"/>
+        `),
+
+        moon: solid('<path d="M64 12a38 38 0 1 0 24 62A32 32 0 0 1 64 12z"/>'),
+
+        leaf: stroke(`
+          <path d="M50 86C26 76 18 48 28 26c22 2 50 10 54 30 4 20-14 28-32 30z"/>
+          <path d="M34 72c10-14 22-24 38-32"/>
+        `),
+
+        wave: stroke(`
+          <path d="M12 40q10-10 20 0t20 0 20 0 16 0"/>
+          <path d="M12 58q10-10 20 0t20 0 20 0 16 0"/>
+          <path d="M12 76q10-10 20 0t20 0 20 0 16 0"/>
+        `),
+
+        mountain: stroke(`
+          <path d="M10 82 40 32l14 22 9-14 27 42z"/>
+          <path d="M31 47l9 7 8-7"/>
+        `),
+
+        music: stroke(`
+          <circle cx="36" cy="72" r="11"/>
+          <path d="M47 72V24l28-9v48"/>
+          <circle cx="64" cy="63" r="11"/>
+        `),
+
+        coin: stroke(`
+          <circle cx="50" cy="50" r="32"/>
+          <path d="M50 28v44"/>
+          <path d="M62 40c0-6-6-8-12-8s-12 2-12 8 6 8 12 10 12 4 12 10-6 8-12 8-12-2-12-8"/>
+        `),
+
+        briefcase: stroke(`
+          <rect x="18" y="32" width="64" height="44" rx="9"/>
+          <path d="M38 32v-8a6 6 0 0 1 6-6h12a6 6 0 0 1 6 6v8"/>
+          <path d="M18 52h64"/>
+        `),
+
+        cap: stroke(`
+          <path d="M12 42 50 24l38 18-38 18z"/>
+          <path d="M28 52v16c0 6 44 6 44 0V52"/>
+          <path d="M84 46v20"/>
+        `),
+
+        plane: stroke(`
+          <path d="M14 52 86 18 64 86 50 62z"/>
+          <path d="M86 18 50 62"/>
+        `),
+
+        pulse: stroke('<path d="M10 52h20l9-22 14 44 9-22h28"/>'),
+
+        dumbbell: stroke(`
+          <path d="M22 34v32M34 26v48M66 26v48M78 34v32M34 50h32"/>
+        `),
+
+        shield: stroke(`
+          <path d="M50 12 84 26v24c0 20-15 33-34 40-19-7-34-20-34-40V26z"/>
+          <path d="M36 48l10 10 19-20"/>
+        `),
+
+        eye: stroke(`
+          <path d="M10 50c12-17 26-25 40-25s28 8 40 25c-12 17-26 25-40 25S22 67 10 50z"/>
+          <circle cx="50" cy="50" r="11"/>
+        `),
+
+        drop: stroke('<path d="M50 10c14 21 28 33 28 50a28 28 0 0 1-56 0c0-17 14-29 28-50z"/>'),
+
+        sparkle: solid(`
+          <path d="M50 6l7 29 29 7-29 7-7 29-7-29-29-7 29-7z"/>
+          <path d="M84 62l3 12 12 3-12 3-3 12-3-12-12-3 12-3z"/>
+        `),
+
+        bird: solid(`
+          <path d="M50 72c-16 0-30-7-42-21 14 3 24-2 31-12 6 7 14 10 23 8 8-2 13-8 15-17 8 12 5 25-5 34-6 5-14 8-22 8z"/>
+        `),
+
+        book: stroke(`
+          <path d="M50 34C40 26 26 26 18 30v48c8-4 22-4 32 4 10-8 24-8 32-4V30c-8-4-22-4-32 4z"/>
+          <path d="M50 34v48"/>
+        `),
+
+        city: stroke(`
+          <path d="M12 84V46h18v38"/>
+          <path d="M30 84V24h22v60"/>
+          <path d="M52 84V54h16v30"/>
+          <path d="M68 84V36h20v48"/>
+          <path d="M38 38h6M38 52h6M38 66h6M60 64h5M76 48h5M76 62h5"/>
+        `),
+
+        palette: `${stroke(`
+          <path d="M50 14a36 36 0 1 0 0 72c7 0 9-4 9-8s-4-7-4-11 4-7 10-7h9a12 12 0 0 0 12-12c0-19-17-34-36-34z"/>
+        `)}${solid('<circle cx="34" cy="38" r="4"/><circle cx="52" cy="28" r="4"/><circle cx="70" cy="40" r="4"/>')}`,
+
+        atom: stroke(`
+          <circle cx="50" cy="50" r="7"/>
+          <ellipse cx="50" cy="50" rx="37" ry="14"/>
+          <ellipse cx="50" cy="50" rx="37" ry="14" transform="rotate(60 50 50)"/>
+          <ellipse cx="50" cy="50" rx="37" ry="14" transform="rotate(120 50 50)"/>
+        `),
+
+        snow: stroke(`
+          <path d="M50 10v80M16 30l68 40M84 30L16 70"/>
+          <path d="M50 22l-8-8M50 22l8-8M50 78l-8 8M50 78l8 8"/>
+        `),
+
+        paw: solid(`
+          <ellipse cx="50" cy="64" rx="20" ry="17"/>
+          <circle cx="24" cy="40" r="9"/>
+          <circle cx="41" cy="28" r="9"/>
+          <circle cx="60" cy="28" r="9"/>
+          <circle cx="77" cy="40" r="9"/>
+        `),
+
+        bulb: stroke(`
+          <circle cx="50" cy="42" r="24"/>
+          <path d="M40 66h20M42 76h16M46 86h8"/>
+        `),
+
+        chat: stroke(`
+          <path d="M22 22h56a8 8 0 0 1 8 8v30a8 8 0 0 1-8 8H52L34 84V68H22a8 8 0 0 1-8-8V30a8 8 0 0 1 8-8z"/>
+          <path d="M36 42h28M36 56h16"/>
+        `),
+
+        flame: solid(`
+          <path d="M50 88a26 26 0 0 1-26-26c0-15 11-23 17-36 3-6 5-11 6-16 13 11 29 27 29 52a26 26 0 0 1-26 26z"/>
+        `),
+
+        flower: `${solid(`
+          <circle cx="50" cy="28" r="11"/>
+          <circle cx="72" cy="42" r="11"/>
+          <circle cx="64" cy="66" r="11"/>
+          <circle cx="36" cy="66" r="11"/>
+          <circle cx="28" cy="42" r="11"/>
+        `)}${solid('<circle cx="50" cy="48" r="9" fill="#fff" opacity=".55"/>')}`,
+      };
+
+      /* ------------------------------------------------------------------
+         Mapa de conceitos: termo → categoria, paleta e ícone
+         ------------------------------------------------------------------ */
+      const CONCEPTS = [
+        {
+          id: 'saudade',
+          label: { pt: 'Saudade', en: 'Longing' },
+          icon: 'moon',
+          palette: ['#818cf8', '#3b0764'],
+          keywords: ['saudade', 'saudades', 'longing', 'nostalgia', 'yearning', 'missing', 'melancolia', 'melancholy'],
+        },
+        {
+          id: 'serendipidade',
+          label: { pt: 'Serendipidade', en: 'Serendipity' },
+          icon: 'sparkle',
+          palette: ['#c084fc', '#be185d'],
+          keywords: ['serendipity', 'serendipidade', 'acaso', 'coincidencia', 'coincidence', 'luck', 'sorte', 'destino', 'destiny', 'milagre', 'miracle'],
+        },
+        {
+          id: 'amor',
+          label: { pt: 'Amor', en: 'Love' },
+          icon: 'heart',
+          palette: ['#fb7185', '#9d174d'],
+          keywords: ['amor', 'love', 'paixao', 'passion', 'romance', 'carinho', 'affection', 'coracao', 'heart', 'beijo', 'kiss', 'apaixonado', 'apaixonada', 'crush', 'casal', 'couple', 'namorada', 'namorado'],
+        },
+        {
+          id: 'amizade',
+          label: { pt: 'Amizade', en: 'Friendship' },
+          icon: 'people',
+          palette: ['#fbbf24', '#db2777'],
+          keywords: ['amizade', 'friendship', 'amigo', 'amiga', 'friend', 'friends', 'companheiro', 'companheirismo', 'brotherhood', 'parceria'],
+        },
+        {
+          id: 'familia',
+          label: { pt: 'Família', en: 'Family' },
+          icon: 'home',
+          palette: ['#fbbf24', '#c2410c'],
+          keywords: ['familia', 'family', 'mae', 'mother', 'pai', 'father', 'filho', 'filha', 'son', 'daughter', 'irmao', 'irma', 'brother', 'sister', 'avos', 'parents', 'lar'],
+        },
+        {
+          id: 'cafe',
+          label: { pt: 'Café', en: 'Coffee' },
+          icon: 'coffee',
+          palette: ['#d97706', '#7c2d12'],
+          keywords: ['cafe', 'coffee', 'cafeteria', 'espresso', 'cappuccino', 'latte', 'cafeina', 'caffeine', 'manha', 'morning'],
+        },
+        {
+          id: 'comida',
+          label: { pt: 'Comida', en: 'Food' },
+          icon: 'bowl',
+          palette: ['#fb923c', '#b91c1c'],
+          keywords: ['comida', 'food', 'almoco', 'lunch', 'jantar', 'dinner', 'receita', 'recipe', 'cozinha', 'kitchen', 'restaurante', 'restaurant', 'sabor', 'taste', 'pao', 'bread', 'queijo', 'cheese', 'bolo', 'cake', 'fruta', 'fruit'],
+        },
+        {
+          id: 'tecnologia',
+          label: { pt: 'Tecnologia', en: 'Technology' },
+          icon: 'chip',
+          palette: ['#22d3ee', '#1d4ed8'],
+          keywords: ['tecnologia', 'technology', 'tech', 'computador', 'computer', 'software', 'hardware', 'codigo', 'code', 'programacao', 'programming', 'algoritmo', 'algorithm', 'internet', 'digital', 'dados', 'data', 'inteligencia artificial', 'artificial intelligence', 'ia', 'ai', 'robot', 'robo', 'aplicativo', 'app'],
+        },
+        {
+          id: 'tempo',
+          label: { pt: 'Tempo', en: 'Time' },
+          icon: 'clock',
+          palette: ['#818cf8', '#312e81'],
+          keywords: ['tempo', 'time', 'hora', 'hour', 'relogio', 'clock', 'minuto', 'minute', 'segundo', 'second', 'passado', 'past', 'futuro', 'future', 'presente', 'historia', 'history', 'era', 'seculo', 'century', 'atraso', 'late'],
+        },
+        {
+          id: 'chuva',
+          label: { pt: 'Chuva', en: 'Rain' },
+          icon: 'rain',
+          palette: ['#38bdf8', '#1e3a8a'],
+          keywords: ['chuva', 'rain', 'chover', 'raining', 'tempestade', 'storm', 'trovao', 'thunder', 'umido', 'wet', 'molhado', 'guarda-chuva', 'umbrella', 'nublado', 'cloudy'],
+        },
+        {
+          id: 'sol',
+          label: { pt: 'Sol', en: 'Sun' },
+          icon: 'sun',
+          palette: ['#fbbf24', '#ea580c'],
+          keywords: ['sol', 'sun', 'verao', 'summer', 'calor', 'heat', 'quente', 'hot', 'luz', 'light', 'brilho', 'shine', 'praia', 'beach', 'dia', 'day'],
+        },
+        {
+          id: 'noite',
+          label: { pt: 'Noite', en: 'Night' },
+          icon: 'moon',
+          palette: ['#6366f1', '#1e1b4b'],
+          keywords: ['noite', 'night', 'lua', 'moon', 'estrela', 'star', 'estrelas', 'stars', 'sono', 'sleep', 'sonhar', 'dream', 'escuro', 'dark', 'madrugada', 'meia-noite', 'midnight'],
+        },
+        {
+          id: 'natureza',
+          label: { pt: 'Natureza', en: 'Nature' },
+          icon: 'leaf',
+          palette: ['#4ade80', '#15803d'],
+          keywords: ['natureza', 'nature', 'arvore', 'tree', 'floresta', 'forest', 'planta', 'plant', 'verde', 'green', 'folha', 'leaf', 'terra', 'earth', 'ambiente', 'environment', 'jardim', 'garden', 'primavera', 'spring'],
+        },
+        {
+          id: 'mar',
+          label: { pt: 'Mar', en: 'Sea' },
+          icon: 'wave',
+          palette: ['#2dd4bf', '#0e7490'],
+          keywords: ['mar', 'sea', 'oceano', 'ocean', 'onda', 'wave', 'praia', 'beach', 'agua', 'water', 'barco', 'boat', 'navegar', 'sail', 'peixe', 'fish', 'ilha', 'island'],
+        },
+        {
+          id: 'montanha',
+          label: { pt: 'Montanha', en: 'Mountain' },
+          icon: 'mountain',
+          palette: ['#94a3b8', '#1e293b'],
+          keywords: ['montanha', 'mountain', 'serra', 'trilha', 'hiking', 'escalada', 'climb', 'pico', 'peak', 'alto', 'high', 'aventura', 'adventure', 'natureza selvagem', 'wilderness'],
+        },
+        {
+          id: 'musica',
+          label: { pt: 'Música', en: 'Music' },
+          icon: 'music',
+          palette: ['#e879f9', '#6b21a8'],
+          keywords: ['musica', 'music', 'cancao', 'song', 'cantar', 'sing', 'banda', 'band', 'guitarra', 'guitar', 'piano', 'melodia', 'melody', 'som', 'sound', 'ritmo', 'rhythm', 'danca', 'dance', 'concerto', 'concert', 'dj'],
+        },
+        {
+          id: 'dinheiro',
+          label: { pt: 'Dinheiro', en: 'Money' },
+          icon: 'coin',
+          palette: ['#34d399', '#047857'],
+          keywords: ['dinheiro', 'money', 'grana', 'cash', 'salario', 'salary', 'preco', 'price', 'custo', 'cost', 'rico', 'rich', 'pobre', 'poor', 'investimento', 'investment', 'economia', 'economy', 'banco', 'bank', 'lucro', 'profit', 'dolar', 'real', 'bitcoin', 'cripto', 'crypto'],
+        },
+        {
+          id: 'trabalho',
+          label: { pt: 'Trabalho', en: 'Work' },
+          icon: 'briefcase',
+          palette: ['#60a5fa', '#1e40af'],
+          keywords: ['trabalho', 'work', 'emprego', 'job', 'carreira', 'career', 'empresa', 'company', 'negocio', 'business', 'chefe', 'boss', 'reuniao', 'meeting', 'projeto', 'project', 'produtividade', 'productivity', 'office', 'escritorio'],
+        },
+        {
+          id: 'estudo',
+          label: { pt: 'Estudo', en: 'Study' },
+          icon: 'cap',
+          palette: ['#a78bfa', '#5b21b6'],
+          keywords: ['estudo', 'study', 'escola', 'school', 'faculdade', 'college', 'universidade', 'university', 'aprender', 'learn', 'educacao', 'education', 'professor', 'teacher', 'aluno', 'student', 'prova', 'exam', 'curso', 'course', 'conhecimento', 'knowledge'],
+        },
+        {
+          id: 'viagem',
+          label: { pt: 'Viagem', en: 'Travel' },
+          icon: 'plane',
+          palette: ['#38bdf8', '#4338ca'],
+          keywords: ['viagem', 'travel', 'viajar', 'trip', 'voo', 'flight', 'aviao', 'airplane', 'passagem', 'ticket', 'destino', 'destination', 'mochila', 'backpack', 'turismo', 'tourism', 'ferias', 'vacation', 'hotel', 'mala', 'luggage'],
+        },
+        {
+          id: 'saude',
+          label: { pt: 'Saúde', en: 'Health' },
+          icon: 'pulse',
+          palette: ['#4ade80', '#0f766e'],
+          keywords: ['saude', 'health', 'medico', 'doctor', 'hospital', 'doenca', 'disease', 'corpo', 'body', 'exercicio', 'exercise', 'bem-estar', 'wellness', 'cura', 'heal', 'vida', 'life', 'medicina', 'medicine', 'corrida', 'run'],
+        },
+        {
+          id: 'esporte',
+          label: { pt: 'Esporte', en: 'Sport' },
+          icon: 'dumbbell',
+          palette: ['#fb923c', '#b91c1c'],
+          keywords: ['esporte', 'sport', 'futebol', 'soccer', 'football', 'treino', 'training', 'academia', 'gym', 'jogo', 'game', 'time', 'team', 'atleta', 'athlete', 'competicao', 'competition', 'vitoria', 'victory', 'campeao', 'champion', 'olimpiadas', 'olympics'],
+        },
+        {
+          id: 'coragem',
+          label: { pt: 'Coragem', en: 'Courage' },
+          icon: 'shield',
+          palette: ['#f59e0b', '#b91c1c'],
+          keywords: ['coragem', 'courage', 'braveza', 'bravery', 'brave', 'forca', 'strength', 'guerreiro', 'warrior', 'heroi', 'hero', 'lutar', 'fight', 'resistencia', 'resilience', 'confianca', 'confidence', 'risco', 'risk'],
+        },
+        {
+          id: 'medo',
+          label: { pt: 'Medo', en: 'Fear' },
+          icon: 'eye',
+          palette: ['#94a3b8', '#1e293b'],
+          keywords: ['medo', 'fear', 'assustado', 'scared', 'terror', 'panico', 'panic', 'ansiedade', 'anxiety', 'perigo', 'danger', 'ameaca', 'threat', 'pesadelo', 'nightmare', 'susto'],
+        },
+        {
+          id: 'tristeza',
+          label: { pt: 'Tristeza', en: 'Sadness' },
+          icon: 'drop',
+          palette: ['#60a5fa', '#1e3a8a'],
+          keywords: ['tristeza', 'sadness', 'triste', 'sad', 'chorar', 'cry', 'lagrima', 'tear', 'luto', 'grief', 'dor', 'pain', 'solidao', 'loneliness', 'sozinho', 'alone', 'depressao', 'depression', 'despedida', 'goodbye'],
+        },
+        {
+          id: 'alegria',
+          label: { pt: 'Alegria', en: 'Joy' },
+          icon: 'sparkle',
+          palette: ['#fde047', '#ea580c'],
+          keywords: ['alegria', 'joy', 'felicidade', 'happiness', 'feliz', 'happy', 'riso', 'laugh', 'sorriso', 'smile', 'festa', 'party', 'celebracao', 'celebration', 'animacao', 'fun', 'entusiasmo', 'excitement'],
+        },
+        {
+          id: 'paz',
+          label: { pt: 'Paz', en: 'Peace' },
+          icon: 'bird',
+          palette: ['#7dd3fc', '#0369a1'],
+          keywords: ['paz', 'peace', 'calma', 'calm', 'tranquilidade', 'tranquility', 'serenidade', 'serenity', 'silencio', 'silence', 'meditar', 'meditation', 'equilibrio', 'balance', 'harmonia', 'harmony'],
+        },
+        {
+          id: 'liberdade',
+          label: { pt: 'Liberdade', en: 'Freedom' },
+          icon: 'bird',
+          palette: ['#67e8f9', '#1d4ed8'],
+          keywords: ['liberdade', 'freedom', 'livre', 'free', 'soltar', 'release', 'independencia', 'independence', 'voar', 'fly', 'escolha', 'choice', 'direito', 'right'],
+        },
+        {
+          id: 'conhecimento',
+          label: { pt: 'Conhecimento', en: 'Knowledge' },
+          icon: 'book',
+          palette: ['#818cf8', '#3730a3'],
+          keywords: ['conhecimento', 'knowledge', 'livro', 'book', 'leitura', 'reading', 'ler', 'read', 'sabedoria', 'wisdom', 'ideia', 'idea', 'pensamento', 'thought', 'filosofia', 'philosophy', 'verdade', 'truth', 'ciencia', 'science'],
+        },
+        {
+          id: 'cidade',
+          label: { pt: 'Cidade', en: 'City' },
+          icon: 'city',
+          palette: ['#a5b4fc', '#312e81'],
+          keywords: ['cidade', 'city', 'urbano', 'urban', 'predio', 'building', 'rua', 'street', 'metropole', 'metropolis', 'transito', 'traffic', 'bairro', 'neighborhood', 'centro', 'downtown', 'arquitetura', 'architecture'],
+        },
+        {
+          id: 'arte',
+          label: { pt: 'Arte', en: 'Art' },
+          icon: 'palette',
+          palette: ['#f472b6', '#7c3aed'],
+          keywords: ['arte', 'art', 'pintura', 'painting', 'desenho', 'drawing', 'escultura', 'sculpture', 'criatividade', 'creativity', 'design', 'cor', 'color', 'estetica', 'aesthetic', 'fotografia', 'photography', 'poesia', 'poetry'],
+        },
+        {
+          id: 'ciencia',
+          label: { pt: 'Ciência', en: 'Science' },
+          icon: 'atom',
+          palette: ['#22d3ee', '#1d4ed8'],
+          keywords: ['ciencia', 'science', 'fisica', 'physics', 'quimica', 'chemistry', 'biologia', 'biology', 'pesquisa', 'research', 'experimento', 'experiment', 'atomo', 'atom', 'universo', 'universe', 'espaco', 'space', 'energia', 'energy'],
+        },
+        {
+          id: 'inverno',
+          label: { pt: 'Inverno', en: 'Winter' },
+          icon: 'snow',
+          palette: ['#bae6fd', '#0369a1'],
+          keywords: ['inverno', 'winter', 'neve', 'snow', 'frio', 'cold', 'gelo', 'ice', 'geada', 'frost', 'natal', 'christmas', 'dezembro', 'december'],
+        },
+        {
+          id: 'animal',
+          label: { pt: 'Animal', en: 'Animal' },
+          icon: 'paw',
+          palette: ['#fbbf24', '#92400e'],
+          keywords: ['animal', 'animals', 'cachorro', 'dog', 'gato', 'cat', 'pet', 'bicho', 'passaro', 'bird', 'peixe', 'fish', 'cavalo', 'horse', 'leao', 'lion', 'veterinario', 'vet'],
+        },
+        {
+          id: 'esperanca',
+          label: { pt: 'Esperança', en: 'Hope' },
+          icon: 'bulb',
+          palette: ['#fcd34d', '#ea580c'],
+          keywords: ['esperanca', 'hope', 'sonho', 'dream', 'futuro', 'future', 'luz', 'light', 'renascimento', 'rebirth', 'fe', 'faith', 'acreditar', 'believe', 'otimismo', 'optimism'],
+        },
+        {
+          id: 'comunicacao',
+          label: { pt: 'Comunicação', en: 'Communication' },
+          icon: 'chat',
+          palette: ['#38bdf8', '#4338ca'],
+          keywords: ['comunicacao', 'communication', 'conversa', 'conversation', 'falar', 'speak', 'talk', 'idioma', 'language', 'palavra', 'word', 'mensagem', 'message', 'voz', 'voice', 'dialogo', 'dialogue', 'traducao', 'translation'],
+        },
+        {
+          id: 'fogo',
+          label: { pt: 'Fogo', en: 'Fire' },
+          icon: 'flame',
+          palette: ['#fb923c', '#991b1b'],
+          keywords: ['fogo', 'fire', 'chama', 'flame', 'queimar', 'burn', 'calor', 'heat', 'paixao ardente', 'ardente', 'incendio', 'blaze'],
+        },
+        {
+          id: 'agua',
+          label: { pt: 'Água', en: 'Water' },
+          icon: 'drop',
+          palette: ['#22d3ee', '#1d4ed8'],
+          keywords: ['agua', 'water', 'rio', 'river', 'lago', 'lake', 'cachoeira', 'waterfall', 'sede', 'thirst', 'beber', 'drink', 'limpo', 'clean', 'fluir', 'flow'],
+        },
+        {
+          id: 'flor',
+          label: { pt: 'Flores', en: 'Flowers' },
+          icon: 'flower',
+          palette: ['#f9a8d4', '#16a34a'],
+          keywords: ['flor', 'flower', 'flores', 'flowers', 'rosa', 'rose', 'jardim', 'garden', 'primavera', 'spring', 'perfume', 'fragrance', 'bonito', 'beautiful', 'presente', 'gift'],
+        },
+      ];
+
+      const FALLBACK_PALETTES = [
+        ['#6366f1', '#a21caf'],
+        ['#0ea5e9', '#4338ca'],
+        ['#f43f5e', '#7c3aed'],
+        ['#14b8a6', '#1d4ed8'],
+        ['#f59e0b', '#be123c'],
+        ['#8b5cf6', '#db2777'],
+      ];
 
       /* ------------------------------------------------------------------
          Estado e referências
@@ -1604,22 +2075,21 @@
         translationTime: document.getElementById('translationTime'),
         copyBtn: document.getElementById('copyBtn'),
         speakBtn: document.getElementById('speakBtn'),
-        imageSourceBadge: document.getElementById('imageSourceBadge'),
+        conceptBadge: document.getElementById('conceptBadge'),
         regenerateBtn: document.getElementById('regenerateBtn'),
-        imageLoading: document.getElementById('imageLoading'),
-        imageError: document.getElementById('imageError'),
-        imageErrorText: document.getElementById('imageErrorText'),
-        retryImageBtn: document.getElementById('retryImageBtn'),
-        imageReady: document.getElementById('imageReady'),
-        resultImage: document.getElementById('resultImage'),
-        imageCaption: document.getElementById('imageCaption'),
-        imageCredit: document.getElementById('imageCredit'),
+        aiBtn: document.getElementById('aiBtn'),
+        aiStatus: document.getElementById('aiStatus'),
+        cardSkeleton: document.getElementById('cardSkeleton'),
+        cardReady: document.getElementById('cardReady'),
+        conceptCard: document.getElementById('conceptCard'),
+        cardCaption: document.getElementById('cardCaption'),
         expandImageBtn: document.getElementById('expandImageBtn'),
         downloadImageBtn: document.getElementById('downloadImageBtn'),
         lightbox: document.getElementById('lightbox'),
-        lightboxImage: document.getElementById('lightboxImage'),
+        lightboxCard: document.getElementById('lightboxCard'),
         lightboxCaption: document.getElementById('lightboxCaption'),
-        lightboxCredit: document.getElementById('lightboxCredit'),
+        downloadPngBtn: document.getElementById('downloadPngBtn'),
+        downloadSvgBtn: document.getElementById('downloadSvgBtn'),
         closeLightboxBtn: document.getElementById('closeLightboxBtn'),
         toastContainer: document.getElementById('toastContainer'),
       };
@@ -1629,24 +2099,2921 @@
         translation: '',
         sourceText: '',
         translationMs: 0,
-        candidates: [],
-        candidateIndex: 0,
+        card: null,
+        cardVariant: 0,
+        cardSvg: '',
         imageUrl: '',
         imageSource: '',
-        imageCredit: '',
-        imageCreditUrl: '',
-        imageLicense: '',
-        query: '',
-        translateRequest: 0,
         imageRequest: 0,
+        cardAbort: null,
+        aiAbort: null,
+        aiBusy: false,
+        aiVariant: 0,
+        aiObjectUrl: '',
+        aiBlockedUntil: 0,
+        aiCooldownTimer: null,
+        translateRequest: 0,
         translateAbort: null,
-        imageAbort: null,
         busy: false,
         swapRotation: 0,
         lastFocus: null,
       };
 
-      let unsplashAvailable = null; // null = ainda não testado
+      /* ------------------------------------------------------------------
+         Busca de imagens ilustrativas (Wikimedia Commons, pública, sem chave)
+         ------------------------------------------------------------------ */
+      const IMAGES = {
+        commons: 'https://commons.wikimedia.org/w/api.php',
+        timeout: 12000,
+        searchLimit: 20,
+        validateTimeout: 6000,
+        maxAttempts: 4,
+      };
+
+      /* ------------------------------------------------------------------
+         Ilustrações geradas sob demanda (Pollinations Classic)
+         Serviço público, sem chave, limitado por IP. Nenhum segredo aqui.
+         ------------------------------------------------------------------ */
+      const AI_IMAGES = {
+        endpoint: 'https://image.pollinations.ai/prompt/',
+        width: 1024,
+        height: 576,
+        timeout: 25000,
+        validateTimeout: 8000,
+        cacheVersion: 'v1',
+        cacheDb: 'lumina-ai-images',
+        cacheStore: 'images',
+        maxEntries: 120,
+        maxBytes: 40 * 1024 * 1024,
+        memoryEntries: 24,
+        maxBlobBytes: 8 * 1024 * 1024,
+        maxPromptLength: 380,
+      };
+
+      const AI_SOURCE_LABEL = 'Ilustração IA · Pollinations';
+
+      /* Termos ambíguos ou abstratos recebem um sujeito visual explícito.
+         Chaves já normalizadas (sem acentos, minúsculas). */
+      const AI_SUBJECT_MAP = {
+        smile: 'a person smiling warmly, close-up portrait',
+        sorriso: 'a person smiling warmly, close-up portrait',
+        apple: 'a red apple fruit on a wooden table, not a computer or logo',
+        maca: 'a red apple fruit on a wooden table, not a computer or logo',
+        democracy: 'citizens casting ballots in a voting booth during an election',
+        democracia: 'citizens casting ballots in a voting booth during an election',
+        'cold feet': 'a nervous person hesitating before making an important decision',
+        'frio nos pes': 'a nervous person hesitating before making an important decision',
+        'break the ice': 'two people starting a conversation and feeling comfortable',
+        'quebrar o gelo': 'two people starting a conversation and feeling comfortable',
+        bank: 'a classical bank building with stone columns',
+        banco: 'a classical bank building with stone columns',
+        mouse: 'a small mouse rodent on a wooden surface',
+        rato: 'a small mouse rodent on a wooden surface',
+        jaguar: 'a jaguar big cat in the rainforest',
+        onca: 'a jaguar big cat in the rainforest',
+        orange: 'a whole orange fruit with a green leaf',
+        laranja: 'a whole orange fruit with a green leaf',
+        python: 'a green python snake on a branch',
+        piton: 'a green python snake on a branch',
+        mercury: 'the planet Mercury in space',
+        mercurio: 'the planet Mercury in space',
+        amazon: 'the Amazon rainforest and river',
+        amazonia: 'the Amazon rainforest and river',
+        bridge: 'a stone bridge over a calm river',
+        ponte: 'a stone bridge over a calm river',
+        spring: 'a fresh green spring meadow with flowers',
+        primavera: 'a fresh green spring meadow with flowers',
+        light: 'a warm sunbeam entering a room',
+        luz: 'a warm sunbeam entering a room',
+        freedom: 'a person with open arms on a hill at sunrise',
+        liberdade: 'a person with open arms on a hill at sunrise',
+        love: 'two hands forming a heart shape',
+        amor: 'two hands forming a heart shape',
+      };
+
+      const aiMemoryCache = new Map();
+      let aiCachePromise = null;
+
+      /* ------------------------------------------------------------------
+         Dicionário local de tradução (segurança contra echo da API MyMemory)
+         Garante que palavras básicas tenham sempre tradução correta.
+         ------------------------------------------------------------------ */
+      const TRANSLATION_MAP = {
+        // Inglês → Português
+        'house': 'casa',
+        'home': 'lar',
+        'home2': 'casa',
+        'dog': 'cachorro',
+        'cat': 'gato',
+        'car': 'carro',
+        'tree': 'árvore',
+        'water': 'água',
+        'food': 'comida',
+        'bread': 'pão',
+        'coffee': 'café',
+        'tea': 'chá',
+        'apple': 'maçã',
+        'banana': 'banana',
+        'orange': 'laranja',
+        'flower': 'flor',
+        'sun': 'sol',
+        'moon': 'lua',
+        'star': 'estrela',
+        'sky': 'céu',
+        'sea': 'mar',
+        'ocean': 'oceano',
+        'river': 'rio',
+        'lake': 'lago',
+        'mountain': 'montanha',
+        'forest': 'floresta',
+        'flower2': 'flor',
+        'bird': 'pássaro',
+        'fish': 'peixe',
+        'horse': 'cavalo',
+        'cow': 'vaca',
+        'pig': 'porco',
+        'sheep': 'ovelha',
+        'love': 'amor',
+        'friend': 'amigo',
+        'family': 'família',
+        'book': 'livro',
+        'school': 'escola',
+        'house2': 'casa',
+        'house3': 'casa',
+        'house4': 'casa',
+        'house5': 'casa',
+        'house6': 'casa',
+        'house7': 'casa',
+        'house8': 'casa',
+        'house9': 'casa',
+        'house10': 'casa',
+        'table': 'mesa',
+        'chair': 'cadeira',
+        'bed': 'cama',
+        'door': 'porta',
+        'window': 'janela',
+        'light': 'luz',
+        'fire': 'fogo',
+        'fire2': 'fogo',
+        'rain': 'chuva',
+        'snow': 'neve',
+        'wind': 'vento',
+        'cloud': 'nuvem',
+        'storm': 'tempestade',
+        'time': 'tempo',
+        'day': 'dia',
+        'night': 'noite',
+        'morning': 'manhã',
+        'evening': 'noite',
+        'evening2': 'tarde',
+        'afternoon': 'tarde',
+        'week': 'semana',
+        'month': 'mês',
+        'year': 'ano',
+        'hour': 'hora',
+        'minute': 'minuto',
+        'second': 'segundo',
+        'man': 'homem',
+        'woman': 'mulher',
+        'boy': 'menino',
+        'girl': 'menina',
+        'child': 'criança',
+        'baby': 'bebê',
+        'father': 'pai',
+        'mother': 'mãe',
+        'brother': 'irmão',
+        'sister': 'irmã',
+        'son': 'filho',
+        'daughter': 'filha',
+        'husband': 'marido',
+        'wife': 'esposa',
+        'doctor': 'médico',
+        'teacher': 'professor',
+        'student': 'estudante',
+        'driver': 'motorista',
+        'chef': 'cozinheiro',
+        'artist': 'artista',
+        'musician': 'músico',
+        'writer': 'escritor',
+        'actor': 'ator',
+        'singer': 'cantor',
+        'dancer': 'dançarino',
+        'painter': 'pintor',
+        'designer': 'designer',
+        'engineer': 'engenheiro',
+        'lawyer': 'advogado',
+        'police': 'policial',
+        'firefighter': 'bombeiro',
+        'soldier': 'soldado',
+        'king': 'rei',
+        'queen': 'rainha',
+        'prince': 'príncipe',
+        'princess': 'princesa',
+        'castle': 'castelo',
+        'city': 'cidade',
+        'town': 'cidade',
+        'village': 'aldeia',
+        'country': 'país',
+        'world': 'mundo',
+        'earth': 'terra',
+        'planet': 'planeta',
+        'space': 'espaço',
+        'universe': 'universo',
+        'galaxy': 'galáxia',
+        'star2': 'estrela',
+        'planet2': 'planeta',
+        'moon2': 'lua',
+        'sun2': 'sol',
+        'sky2': 'céu',
+        'cloud2': 'nuvem',
+        'rain2': 'chuva',
+        'snow2': 'neve',
+        'wind2': 'vento',
+        'fire3': 'fogo',
+        'water2': 'água',
+        'earth2': 'terra',
+        'air': 'ar',
+        'ice': 'gelo',
+        'stone': 'pedra',
+        'gold': 'ouro',
+        'silver': 'prata',
+        'diamond': 'diamante',
+        'ring': 'anel',
+        'necklace': 'colar',
+        'watch': 'relógio',
+        'clock': 'relógio',
+        'phone': 'telefone',
+        'computer': 'computador',
+        'internet': 'internet',
+        'website': 'site',
+        'email': 'e-mail',
+        'password': 'senha',
+        'money': 'dinheiro',
+        'coin': 'moeda',
+        'bill': 'conta',
+        'price': 'preço',
+        'cost': 'custo',
+        'shop': 'loja',
+        'store': 'loja',
+        'market': 'mercado',
+        'restaurant': 'restaurante',
+        'hotel': 'hotel',
+        'airport': 'aeroporto',
+        'station': 'estação',
+        'train': 'trem',
+        'bus': 'ônibus',
+        'plane': 'avião',
+        'ship': 'navio',
+        'boat': 'barco',
+        'bike': 'bicicleta',
+        'motorcycle': 'motocicleta',
+        'truck': 'caminhão',
+        'car2': 'carro',
+        'taxi': 'táxi',
+        'bicycle': 'bicicleta',
+        'shoes': 'sapatos',
+        'shirt': 'camisa',
+        'pants': 'calças',
+        'dress': 'vestido',
+        'jacket': 'jaqueta',
+        'coat': 'casaco',
+        'hat': 'chapéu',
+        'bag': 'bolsa',
+        'suitcase': 'mala',
+        'key': 'chave',
+        'lock': 'fechadura',
+        'door2': 'porta',
+        'window2': 'janela',
+        'wall': 'parede',
+        'floor': 'piso',
+        'ceiling': 'teto',
+        'roof': 'telhado',
+        'garden': 'jardim',
+        'park': 'parque',
+        'beach': 'praia',
+        'island': 'ilha',
+        'bridge': 'ponte',
+        'road': 'estrada',
+        'street': 'rua',
+        'avenue': 'avenida',
+        'square': 'praça',
+        'hospital2': 'hospital',
+        'clinic': 'clínica',
+        'pharmacy': 'farmácia',
+        'bank': 'banco',
+        'post': 'correio',
+        'church': 'igreja',
+        'temple': 'templo',
+        'mosque': 'mesquita',
+        'museum': 'museu',
+        'library': 'biblioteca',
+        'cinema': 'cinema',
+        'theater': 'teatro',
+        'stadium': 'estádio',
+        'gym': 'academia',
+        'pool': 'piscina',
+        'zoo': 'zoológico',
+        'farm': 'fazenda',
+        'factory': 'fábrica',
+        'office2': 'escritório',
+        'store2': 'loja',
+        'mall': 'shopping',
+        'supermarket': 'supermercado',
+        'bakery': 'padaria',
+        'butcher': 'açougue',
+        'cafe2': 'café',
+        'bar': 'bar',
+        'pub': 'pub',
+        'club': 'clube',
+        'party': 'festa',
+        'wedding': 'casamento',
+        'birthday': 'aniversário',
+        'christmas': 'natal',
+        'easter': 'páscoa',
+        'halloween': 'halloween',
+        'valentine': 'dia dos namorados',
+        'new year': 'ano novo',
+        'thanksgiving': 'ação de graças',
+        'music': 'música',
+        'song': 'canção',
+        'song2': 'música',
+        'album': 'álbum',
+        'band': 'banda',
+        'singer2': 'cantor',
+        'guitar': 'violão',
+        'piano': 'piano',
+        'violin': 'violino',
+        'drum': 'bateria',
+        'trumpet': 'trompete',
+        'flute': 'flauta',
+        'saxophone': 'saxofone',
+        'painting': 'pintura',
+        'drawing': 'desenho',
+        'photo': 'foto',
+        'camera': 'câmera',
+        'video': 'vídeo',
+        'movie': 'filme',
+        'film': 'filme',
+        'cinema2': 'cinema',
+        'tv': 'televisão',
+        'radio': 'rádio',
+        'newspaper': 'jornal',
+        'magazine': 'revista',
+        'letter': 'carta',
+        'card': 'cartão',
+        'ticket': 'ingresso',
+        'passport': 'passaporte',
+        'visa': 'visto',
+        'map': 'mapa',
+        'guide': 'guia',
+        'tour': 'tour',
+        'trip': 'viagem',
+        'vacation': 'férias',
+        'holiday': 'feriado',
+        'travel': 'viagem',
+        'tourist': 'turista',
+        'hotel2': 'hotel',
+        'motel': 'motel',
+        'hostel': 'albergue',
+        'resort': 'resort',
+        'camping': 'acampamento',
+        'tent': 'barraca',
+        'sleeping bag': 'saco de dormir',
+        'backpack': 'mochila',
+        'suitcase2': 'mala',
+        'camera2': 'câmera',
+        'phone2': 'telefone',
+        'laptop': 'laptop',
+        'tablet': 'tablet',
+        'keyboard': 'teclado',
+        'mouse': 'mouse',
+        'screen': 'tela',
+        'printer': 'impressora',
+        'scanner': 'scanner',
+        'battery': 'bateria',
+        'charger': 'carregador',
+        'cable': 'cabo',
+        'plug': 'plugue',
+        'socket': 'tomada',
+        'switch': 'interruptor',
+        'bulb': 'lâmpada',
+        'lamp2': 'lâmpada',
+        'fan': 'ventilador',
+        'ac': 'ar-condicionado',
+        'heater': 'aquecedor',
+        'fridge': 'geladeira',
+        'oven': 'forno',
+        'stove': 'fogão',
+        'microwave': 'micro-ondas',
+        'dishwasher': 'lava-louças',
+        'washing machine': 'máquina de lavar',
+        'dryer': 'secadora',
+        'iron': 'ferro de passar',
+        'vacuum': 'aspirador',
+        'soap': 'sabão',
+        'shampoo': 'xampu',
+        'toothpaste': 'creme dental',
+        'toothbrush': 'escova de dentes',
+        'towel': 'toalha',
+        'sheet': 'lençol',
+        'pillow': 'travesseiro',
+        'blanket': 'cobertor',
+        'rug': 'tapete',
+        'curtain': 'cortina',
+        'picture': 'quadro',
+        'mirror': 'espelho',
+        'clock2': 'relógio',
+        'calendar2': 'calendário',
+        'newspaper2': 'jornal',
+        'magazine2': 'revista',
+        'pen': 'caneta',
+        'pencil': 'lápis',
+        'eraser': 'borracha',
+        'scissors': 'tesoura',
+        'glue': 'cola',
+        'tape': 'fita adesiva',
+        'paper': 'papel',
+        'notebook': 'caderno',
+        'folder': 'pasta',
+        'stapler': 'grampeador',
+        'hole punch': 'perfurador',
+        'ruler': 'régua',
+        'compass': 'compasso',
+        'calculator': 'calculadora',
+        'book2': 'livro',
+        'dictionary': 'dicionário',
+        'encyclopedia': 'enciclopédia',
+        'novel': 'romance',
+        'story': 'história',
+        'poem': 'poema',
+        'article': 'artigo',
+        'news': 'notícia',
+        'report': 'relatório',
+        'essay': 'ensaio',
+        'thesis': 'tese',
+        'research': 'pesquisa',
+        'science': 'ciência',
+        'math': 'matemática',
+        'physics': 'física',
+        'chemistry': 'química',
+        'biology': 'biologia',
+        'geology': 'geologia',
+        'astronomy': 'astronomia',
+        'history': 'história',
+        'geography': 'geografia',
+        'philosophy': 'filosofia',
+        'psychology': 'psicologia',
+        'sociology': 'sociologia',
+        'economics': 'economia',
+        'politics': 'política',
+        'law': 'lei',
+        'justice': 'justiça',
+        'court': 'tribunal',
+        'judge': 'juiz',
+        'lawyer2': 'advogado',
+        'police2': 'polícia',
+        'crime': 'crime',
+        'prison': 'prisão',
+        'jail': 'cadeia',
+        'police station': 'delegacia',
+        'fire station': 'corpo de bombeiros',
+        'ambulance': 'ambulância',
+        'hospital3': 'hospital',
+        'clinic2': 'clínica',
+        'pharmacy2': 'farmácia',
+        'dentist': 'dentista',
+        'nurse': 'enfermeiro',
+        'patient': 'paciente',
+        'medicine': 'medicamento',
+        'pill': 'pílula',
+        'injection': 'injeção',
+        'bandage': 'atadura',
+        'syringe': 'seringa',
+        'thermometer': 'termômetro',
+        'stethoscope': 'estetoscópio',
+        'x-ray': 'raio-x',
+        'scan': 'exame',
+        'surgery': 'cirurgia',
+        'operation': 'operação',
+        'health': 'saúde',
+        'sickness': 'doença',
+        'pain': 'dor',
+        'fever': 'febre',
+        'cold': 'resfriado',
+        'flu': 'gripe',
+        'cough': 'tosse',
+        'headache': 'dor de cabeça',
+        'stomach': 'estômago',
+        'heart': 'coração',
+        'lung': 'pulmão',
+        'liver': 'fígado',
+        'kidney': 'rim',
+        'brain': 'cérebro',
+        'blood': 'sangue',
+        'bone': 'osso',
+        'muscle': 'músculo',
+        'skin': 'pele',
+        'hair': 'cabelo',
+        'eye': 'olho',
+        'ear': 'ouvido',
+        'nose': 'nariz',
+        'mouth': 'boca',
+        'tooth': 'dente',
+        'tongue': 'língua',
+        'hand': 'mão',
+        'finger': 'dedo',
+        'arm': 'braço',
+        'leg': 'perna',
+        'foot': 'pé',
+        'knee': 'joelho',
+        'elbow': 'cotovelo',
+        'shoulder': 'ombro',
+        'neck': 'pescoço',
+        'back': 'costas',
+        'chest': 'peito',
+        'waist': 'cintura',
+        'hip': 'quadril',
+        'thigh': 'coxa',
+        'calf': 'panturrilha',
+        'ankle': 'tornozelo',
+        'toe': 'dedo do pé',
+        'nail': 'unha',
+        'beard': 'barba',
+        'mustache': 'bigode',
+        'smile': 'sorriso',
+        'laugh': 'riso',
+        'cry': 'choro',
+        'tear': 'lágrima',
+        'blood2': 'sangue',
+        'sweat': 'suor',
+        'saliva': 'saliva',
+        'urine': 'urina',
+        'feces': 'fezes',
+        'vomit': 'vômito',
+        'breath': 'respiração',
+        'life': 'vida',
+        'death': 'morte',
+        'birth': 'nascimento',
+        'growth': 'crescimento',
+        'change': 'mudança',
+        'time2': 'tempo',
+        'moment': 'momento',
+        'instant': 'instante',
+        'hour2': 'hora',
+        'minute2': 'minuto',
+        'second2': 'segundo',
+        'week2': 'semana',
+        'month2': 'mês',
+        'year2': 'ano',
+        'decade': 'década',
+        'century': 'século',
+        'millennium': 'milenênio',
+        'past': 'passado',
+        'present': 'presente',
+        'future': 'futuro',
+        'before': 'antes',
+        'after': 'depois',
+        'during': 'durante',
+        'since': 'desde',
+        'until': 'até',
+        'now': 'agora',
+        'today': 'hoje',
+        'tomorrow': 'amanhã',
+        'yesterday': 'ontem',
+        'early': 'cedo',
+        'late': 'tarde',
+        'soon': 'logo',
+        'never': 'nunca',
+        'always': 'sempre',
+        'often': 'muitas vezes',
+        'sometimes': 'às vezes',
+        'rarely': 'raramente',
+        'usually': 'geralmente',
+        'here': 'aqui',
+        'there': 'lá',
+        'where': 'onde',
+        'when': 'quando',
+        'why': 'por que',
+        'how': 'como',
+        'what': 'o que',
+        'who': 'quem',
+        'which': 'qual',
+        'whose': 'de quem',
+        'this': 'este',
+        'that': 'aquele',
+        'these': 'estes',
+        'those': 'aqueles',
+        'here2': 'aqui',
+        'there2': 'lá',
+        'yes': 'sim',
+        'no': 'não',
+        'maybe': 'talvez',
+        'okay': 'ok',
+        'please': 'por favor',
+        'thank you': 'obrigado',
+        'sorry': 'desculpe',
+        'excuse me': 'com licença',
+        'hello': 'olá',
+        'hi': 'oi',
+        'bye': 'tchau',
+        'good morning': 'bom dia',
+        'good afternoon': 'boa tarde',
+        'good evening': 'boa noite',
+        'good night': 'boa noite',
+        'welcome': 'bem-vindo',
+        'goodbye': 'adeus',
+        'see you': 'até logo',
+        'take care': 'cuide-se',
+        'good luck': 'boa sorte',
+        'congratulations': 'parabéns',
+        'cheers': 'saúde',
+        'enjoy': 'aproveite',
+        'bon appetit': 'bom apetite',
+        'enjoy your meal': 'bom apetite',
+        'have fun': 'divirta-se',
+        'have a good day': 'tenha um bom dia',
+        'have a nice day': 'tenha um bom dia',
+        'have a good trip': 'boa viagem',
+        'safe travels': 'boa viagem',
+        'welcome back': 'bem-vindo de volta',
+        'long time no see': 'há muito tempo',
+        'nice to meet you': 'prazer em conhecê-lo',
+        'nice to see you': 'prazer em vê-lo',
+        'how are you': 'como você está',
+        'im fine': 'estou bem',
+        'im good': 'estou bem',
+        'not bad': 'não está mal',
+        'so so': 'mais ou menos',
+        'terrible': 'terrível',
+        'awful': 'horrível',
+        'great': 'ótimo',
+        'excellent': 'excelente',
+        'amazing': 'incrível',
+        'wonderful': 'maravilhoso',
+        'fantastic': 'fantástico',
+        'superb': 'magnífico',
+        'perfect': 'perfeito',
+        'ideal': 'ideal',
+        'best': 'melhor',
+        'worst': 'pior',
+        'better': 'melhor',
+        'worse': 'pior',
+        'good': 'bom',
+        'bad': 'mau',
+        'big': 'grande',
+        'small': 'pequeno',
+        'large': 'grande',
+        'tiny': 'minúsculo',
+        'huge': 'enorme',
+        'giant': 'gigante',
+        'little': 'pequeno',
+        'tall': 'alto',
+        'short': 'baixo',
+        'thin': 'magro',
+        'fat': 'gordo',
+        'skinny': 'magro',
+        'slim': 'esbelto',
+        'curvy': 'curvilíneo',
+        'fit': 'em forma',
+        'healthy': 'saudável',
+        'sick': 'doente',
+        'ill': 'doente',
+        'well': 'bem',
+        'ill2': 'doente',
+        'dead': 'morto',
+        'alive': 'vivo',
+        'young': 'jovem',
+        'old': 'velho',
+        'ancient': 'antigo',
+        'modern': 'moderno',
+        'new': 'novo',
+        'old2': 'velho',
+        'fresh': 'fresco',
+        'stale': 'velho',
+        'rich': 'rico',
+        'poor': 'pobre',
+        'wealthy': 'rico',
+        'expensive': 'caro',
+        'cheap': 'barato',
+        'free': 'grátis',
+        'paid': 'pago',
+        'full': 'cheio',
+        'empty': 'vazio',
+        'open': 'aberto',
+        'closed': 'fechado',
+        'locked': 'trancado',
+        'unlocked': 'destrancado',
+        'on': 'ligado',
+        'off': 'desligado',
+        'up': 'cima',
+        'down': 'baixo',
+        'left': 'esquerda',
+        'right': 'direita',
+        'north': 'norte',
+        'south': 'sul',
+        'east': 'leste',
+        'west': 'oeste',
+        'near': 'perto',
+        'far': 'longe',
+        'close': 'perto',
+        'distant': 'distante',
+        'here': 'aqui',
+        'there': 'lá',
+        'everywhere': 'em toda parte',
+        'nowhere': 'em lugar nenhum',
+        'somewhere': 'em algum lugar',
+        'always': 'sempre',
+        'never': 'nunca',
+        'sometimes': 'às vezes',
+        'often': 'muitas vezes',
+        'usually': 'geralmente',
+        'rarely': 'raramente',
+        'seldom': 'raramente',
+        'frequently': 'frequentemente',
+        'occasionally': 'ocasionalmente',
+        'constantly': 'constantemente',
+        'continuously': 'continuamente',
+        'immediately': 'imediatamente',
+        'instantly': 'instantaneamente',
+        'quickly': 'rapidamente',
+        'fast': 'rápido',
+        'slow': 'lento',
+        'slowly': 'lentamente',
+        'swiftly': 'velozmente',
+        'rapidly': 'rapidamente',
+        'hurriedly': 'apressadamente',
+        'calmly': 'calmamente',
+        'quietly': 'silenciosamente',
+        'loudly': 'alto',
+        'softly': 'suavemente',
+        'hardly': 'dificilmente',
+        'easily': 'facilmente',
+        'difficultly': 'dificilmente',
+        'simply': 'simplesmente',
+        'complexly': 'complexamente',
+        'clearly': 'claramente',
+        'obviously': 'obviamente',
+        'probably': 'provavelmente',
+        'possibly': 'possivelmente',
+        'certainly': 'certamente',
+        'definitely': 'definitivamente',
+        'surely': 'certamente',
+        'absolutely': 'absolutamente',
+        'completely': 'completamente',
+        'totally': 'totalmente',
+        'entirely': 'inteiramente',
+        'fully': 'totalmente',
+        'partially': 'parcialmente',
+        'mostly': 'principalmente',
+        'mainly': 'principalmente',
+        'primarily': 'principalmente',
+        'generally': 'geralmente',
+        'specifically': 'especificamente',
+        'particularly': 'particularmente',
+        'especially': 'especialmente',
+        'mainly': 'principalmente',
+        'largely': 'largamente',
+        'mostly': 'principalmente',
+        'nearly': 'quase',
+        'almost': 'quase',
+        'quite': 'bastante',
+        'rather': 'bem',
+        'pretty': 'bastante',
+        'fairly': 'bastante',
+        'reasonably': 'razoavelmente',
+        'extremely': 'extremamente',
+        'incredibly': 'incrivelmente',
+        'amazingly': 'incrivelmente',
+        'surprisingly': 'surpreendentemente',
+        'shockingly': 'chocantemente',
+        'horribly': 'horrivelmente',
+        'terribly': 'terrivelmente',
+        'awfully': 'horrivelmente',
+        'dreadfully': 'terrivelmente',
+        'awfully': 'horrivelmente',
+        'badly': 'mal',
+        'well': 'bem',
+        'better': 'melhor',
+        'best': 'melhor',
+        'worse': 'pior',
+        'worst': 'pior',
+        'least': 'menos',
+        'most': 'mais',
+        'more': 'mais',
+        'less': 'menos',
+        'few': 'poucos',
+        'many': 'muitos',
+        'much': 'muito',
+        'little': 'pouco',
+        'some': 'alguns',
+        'any': 'qualquer',
+        'all': 'todos',
+        'none': 'nenhum',
+        'either': 'qualquer um',
+        'neither': 'nenhum dos dois',
+        'both': 'ambos',
+        'each': 'cada',
+        'every': 'cada',
+        'another': 'outro',
+        'other': 'outro',
+        'others': 'outros',
+        'same': 'mesmo',
+        'different': 'diferente',
+        'similar': 'similar',
+        'identical': 'idêntico',
+        'equal': 'igual',
+        'unequal': 'desigual',
+        'same2': 'mesmo',
+        'different2': 'diferente',
+        'similar2': 'similar',
+        'identical2': 'idêntico',
+        'equal2': 'igual',
+        'unequal2': 'desigual',
+        'whole': 'inteiro',
+        'partial': 'parcial',
+        'complete': 'completo',
+        'incomplete': 'incompleto',
+        'finished': 'terminado',
+        'unfinished': 'inacabado',
+        'done': 'feito',
+        'undone': 'não feito',
+        'ready': 'pronto',
+        'not ready': 'não pronto',
+        'prepared': 'preparado',
+        'unprepared': 'não preparado',
+        'organized': 'organizado',
+        'disorganized': 'desorganizado',
+        'clean': 'limpo',
+        'dirty': 'sujo',
+        'neat': 'arrumado',
+        'messy': 'bagunçado',
+        'tidy': 'arrumado',
+        'untidy': 'desarrumado',
+        'orderly': 'ordenado',
+        'disorderly': 'desordenado',
+        'organized': 'organizado',
+        'disorganized': 'desorganizado',
+        'clear': 'claro',
+        'unclear': 'não claro',
+        'obvious': 'óbvio',
+        'unobvious': 'não óbvio',
+        'evident': 'evidente',
+        'not evident': 'não evidente',
+        'apparent': 'aparente',
+        'not apparent': 'não aparente',
+        'visible': 'visível',
+        'invisible': 'invisível',
+        'obvious': 'óbvio',
+        'hidden': 'oculto',
+        'secret': 'secreto',
+        'private': 'privado',
+        'public': 'público',
+        'open': 'aberto',
+        'closed': 'fechado',
+        'available': 'disponível',
+        'unavailable': 'indisponível',
+        'accessible': 'acessível',
+        'inaccessible': 'inacessível',
+        'reachable': 'alcançável',
+        'unreachable': 'inalcançável',
+        'possible': 'possível',
+        'impossible': 'impossível',
+        'probable': 'provável',
+        'improbable': 'improvável',
+        'certain': 'certo',
+        'uncertain': 'incerto',
+        'sure': 'certo',
+        'unsure': 'não certo',
+        'confident': 'confiante',
+        'not confident': 'não confiante',
+        'sure': 'certo',
+        'not sure': 'não certo',
+        'right': 'certo',
+        'wrong': 'errado',
+        'correct': 'correto',
+        'incorrect': 'incorreto',
+        'true': 'verdadeiro',
+        'false': 'falso',
+        'real': 'real',
+        'fake': 'falso',
+        'genuine': 'genuíno',
+        'authentic': 'autêntico',
+        'original': 'original',
+        'copy': 'cópia',
+        'duplicate': 'duplicata',
+        'unique': 'único',
+        'common': 'comum',
+        'rare': 'raro',
+        'special': 'especial',
+        'ordinary': 'comum',
+        'normal': 'normal',
+        'abnormal': 'anormal',
+        'standard': 'padrão',
+        'non-standard': 'não padrão',
+        'regular': 'regular',
+        'irregular': 'irregular',
+        'consistent': 'consistente',
+        'inconsistent': 'inconsistente',
+        'stable': 'estável',
+        'unstable': 'instável',
+        'steady': 'firme',
+        'unsteady': 'instável',
+        'firm': 'firme',
+        'soft': 'macio',
+        'hard': 'duro',
+        'tough': 'duro',
+        'weak': 'fraco',
+        'strong': 'forte',
+        'powerful': 'poderoso',
+        'powerless': 'poderoso',
+        'mighty': 'poderoso',
+        'feeble': 'fraco',
+        'brave': 'corajoso',
+        'cowardly': 'covarde',
+        'courageous': 'corajoso',
+        'timid': 'tímido',
+        'bold': 'ousado',
+        'shy': 'tímido',
+        'outgoing': 'extrovertido',
+        'introverted': 'introvertido',
+        'extroverted': 'extrovertido',
+        'friendly': 'amigável',
+        'unfriendly': 'não amigável',
+        'kind': 'gentil',
+        'mean': 'médio',
+        'nice': 'legal',
+        'nasty': 'nojento',
+        'pleasant': 'agradável',
+        'unpleasant': 'desagradável',
+        'happy': 'feliz',
+        'sad': 'triste',
+        'joyful': 'alegre',
+        'miserable': 'miserável',
+        'glad': 'contente',
+        'disappointed': 'decepcionado',
+        'pleased': 'satisfeito',
+        'annoyed': 'irritado',
+        'angry': 'zangado',
+        'mad': 'zangado',
+        'furious': 'furioso',
+        'calm': 'calmo',
+        'nervous': 'nervoso',
+        'anxious': 'ansioso',
+        'relaxed': 'relaxado',
+        'tense': 'tenso',
+        'peaceful': 'pacífico',
+        'violent': 'violento',
+        'aggressive': 'agressivo',
+        'peaceful': 'pacífico',
+        'gentle': 'gentil',
+        'harsh': 'duro',
+        'mild': 'suave',
+        'severe': 'grave',
+        'light': 'leve',
+        'heavy': 'pesado',
+        'bright': 'brilhante',
+        'dark': 'escuro',
+        'clear': 'claro',
+        'cloudy': 'nublado',
+        'sunny': 'ensolarado',
+        'rainy': 'chuvoso',
+        'snowy': 'nevado',
+        'windy': 'ventoso',
+        'stormy': 'tempestuoso',
+        'foggy': 'nevoento',
+        'misty': 'neblinoso',
+        'humid': 'úmido',
+        'dry': 'seco',
+        'wet': 'molhado',
+        'cold': 'frio',
+        'hot': 'quente',
+        'warm': 'morno',
+        'cool': 'fresco',
+        'freezing': 'congelante',
+        'boiling': 'fervente',
+        'scorching': 'escaldante',
+        'chilly': 'gelado',
+        'icy': 'gelado',
+        'frozen': 'congelado',
+        'melted': 'derretido',
+        'solid': 'sólido',
+        'liquid': 'líquido',
+        'gas': 'gás',
+        'vapor': 'vapor',
+        'steam': 'vapor',
+        'smoke': 'fumaça',
+        'ash': 'cinza',
+        'dust': 'poeira',
+        'dirt': 'sujeira',
+        'mud': 'lama',
+        'sand': 'areia',
+        'soil': 'solo',
+        'rock': 'rocha',
+        'stone': 'pedra',
+        'pebble': 'seixo',
+        'gravel': 'cascalho',
+        'clay': 'argila',
+        'metal': 'metal',
+        'wood': 'madeira',
+        'plastic': 'plástico',
+        'glass': 'vidro',
+        'paper': 'papel',
+        'cardboard': 'papelão',
+        'fabric': 'tecido',
+        'cloth': 'pano',
+        'leather': 'couro',
+        'fur': 'pêlo',
+        'wool': 'lã',
+        'cotton': 'algodão',
+        'silk': 'seda',
+        'linen': 'linho',
+        'polyester': 'poliéster',
+        'nylon': 'nylon',
+        'rubber': 'borracha',
+        'latex': 'látex',
+        'foam': 'espuma',
+        'sponge': 'esponja',
+        'paper': 'papel',
+        'ink': 'tinta',
+        'paint': 'tinta',
+        'dye': 'corante',
+        'color': 'cor',
+        'red': 'vermelho',
+        'blue': 'azul',
+        'green': 'verde',
+        'yellow': 'amarelo',
+        'orange': 'laranja',
+        'purple': 'roxo',
+        'pink': 'rosa',
+        'brown': 'marrom',
+        'black': 'preto',
+        'white': 'branco',
+        'gray': 'cinza',
+        'grey': 'cinza',
+        'silver': 'prateado',
+        'gold': 'dourado',
+        'bronze': 'bronze',
+        'copper': 'cobre',
+        'iron': 'ferro',
+        'steel': 'aço',
+        'aluminum': 'alumínio',
+        'tin': 'estanho',
+        'lead': 'chumbo',
+        'zinc': 'zinco',
+        'nickel': 'níquel',
+        'brass': 'latão',
+        'bronze': 'bronze',
+        'platinum': 'platina',
+        'diamond': 'diamante',
+        'ruby': 'rubi',
+        'emerald': 'esmeralda',
+        'sapphire': 'safira',
+        'pearl': 'pérola',
+        'opal': 'ópala',
+        'amber': 'âmbar',
+        'jade': 'jade',
+        'quartz': 'quartzo',
+        'crystal': 'cristal',
+        'glass': 'vidro',
+        'mirror': 'espelho',
+        'window': 'janela',
+        'door': 'porta',
+        'gate': 'portão',
+        'fence': 'cerca',
+        'wall': 'parede',
+        'roof': 'telhado',
+        'floor': 'piso',
+        'ceiling': 'teto',
+        'foundation': 'fundação',
+        'basement': 'porão',
+        'attic': 'sótão',
+        'garage': 'garagem',
+        'driveway': 'entrada de carro',
+        'yard': 'quintal',
+        'garden': 'jardim',
+        'lawn': 'gramado',
+        'patio': 'pátio',
+        'deck': 'varanda',
+        'porch': 'varanda',
+        'balcony': 'varanda',
+        'terrace': 'terraço',
+        'veranda': 'varanda',
+        'hallway': 'corredor',
+        'lobby': 'saguão',
+        'foyer': 'entrada',
+        'living room': 'sala de estar',
+        'dining room': 'sala de jantar',
+        'kitchen': 'cozinha',
+        'bedroom': 'quarto',
+        'bathroom': 'banheiro',
+        'restroom': 'banheiro',
+        'toilet': 'vaso sanitário',
+        'shower': 'chuveiro',
+        'bathtub': 'banheira',
+        'sink': 'pia',
+        'faucet': 'torneira',
+        'tap': 'torneira',
+        'tap2': 'torneira',
+        'toilet2': 'vaso sanitário',
+        'shower2': 'chuveiro',
+        'bathtub2': 'banheira',
+        'sink2': 'pia',
+        'mirror': 'espelho',
+        'cabinet': 'armário',
+        'cupboard': 'armário',
+        'closet': 'guarda-roupa',
+        'wardrobe': 'guarda-roupa',
+        'drawer': 'gaveta',
+        'shelf': 'prateleira',
+        'bookcase': 'estante de livros',
+        'desk': 'escrivaninha',
+        'table': 'mesa',
+        'chair': 'cadeira',
+        'stool': 'banqueta',
+        'bench': 'banco',
+        'sofa': 'sofá',
+        'couch': 'sofá',
+        'loveseat': 'sofá de dois lugares',
+        'ottoman': 'pufe',
+        'recliner': 'poltrona reclinável',
+        'armchair': 'poltrona',
+        'bean bag': 'poltrona de saco',
+        'futon': 'futon',
+        'daybed': 'cama de sofá',
+        'bunk bed': 'beliche',
+        'crib': 'berço',
+        'bassinet': 'moisés',
+        'mattress': 'colchão',
+        'box spring': 'cama de molas',
+        'bed frame': 'estrada de cama',
+        'headboard': 'cabeceira',
+        'footboard': 'peceira',
+        'nightstand': 'mesa de cabeceira',
+        'dresser': 'cômoda',
+        'chest': 'baú',
+        'armoire': 'armário',
+        'wardrobe2': 'guarda-roupa',
+        'closet2': 'armário',
+        'pantry': 'dispensa',
+        'cupboard2': 'armário',
+        'hutch': 'aparador',
+        'sideboard': 'aparador',
+        'buffet': 'bufê',
+        'console': 'consola',
+        'entryway': 'entrada',
+        'mudroom': 'vestíbulo',
+        'foyer2': 'entrada',
+        'foyer3': 'entrada',
+        'hall': 'corredor',
+        'passage': 'passagem',
+        'corridor': 'corredor',
+        'aisle': 'corredor',
+        'lane': 'faixa',
+        'path': 'caminho',
+        'trail': 'trilha',
+        'track': 'pista',
+        'course': 'curso',
+        'route': 'rota',
+        'way': 'caminho',
+        'street': 'rua',
+        'avenue': 'avenida',
+        'boulevard': 'boulevard',
+        'drive': 'alameda',
+        'court': 'rua',
+        'place': 'lugar',
+        'terrace': 'terraço',
+        'circle': 'círculo',
+        'square': 'praça',
+        'plaza': 'praça',
+        'park': 'parque',
+        'playground': 'parque infantil',
+        'field': 'campo',
+        'meadow': 'prado',
+        'pasture': 'pastagem',
+        'farm': 'fazenda',
+        'ranch': 'fazenda',
+        'orchard': 'pomar',
+        'vineyard': 'vinhedo',
+        'grove': 'bosque',
+        'garden': 'jardim',
+        'greenhouse': 'estufa',
+        'nursery': 'viveiro',
+        'arboretum': 'arboreto',
+        'botanical garden': 'jardim botânico',
+        'zoo': 'zoológico',
+        'aquarium': 'aquário',
+        'aviary': 'volière',
+        'insectarium': 'insectário',
+        'planetarium': 'planetário',
+        'observatory': 'observatório',
+        'museum': 'museu',
+        'gallery': 'galeria',
+        'exhibition': 'exposição',
+        'fair': 'feira',
+        'festival': 'festival',
+        'carnival': 'carnaval',
+        'circus': 'circo',
+        'parade': 'desfile',
+        'procession': 'procissão',
+        'ceremony': 'cerimônia',
+        'ritual': 'ritual',
+        'tradition': 'tradição',
+        'custom': 'costume',
+        'habit': 'hábito',
+        'routine': 'rotina',
+        'practice': 'prática',
+        'usage': 'uso',
+        'manner': 'maneira',
+        'style': 'estilo',
+        'fashion': 'moda',
+        'trend': 'tendência',
+        'mode': 'modo',
+        'form': 'forma',
+        'shape': 'forma',
+        'figure': 'figura',
+        'pattern': 'padrão',
+        'design': 'design',
+        'plan': 'plano',
+        'scheme': 'esquema',
+        'system': 'sistema',
+        'method': 'método',
+        'technique': 'técnica',
+        'procedure': 'procedimento',
+        'process': 'processo',
+        'operation': 'operação',
+        'function': 'função',
+        'role': 'papel',
+        'part': 'parte',
+        'piece': 'peça',
+        'bit': 'pedaço',
+        'fragment': 'fragmento',
+        'section': 'seção',
+        'segment': 'segmento',
+        'portion': 'porção',
+        'share': 'parte',
+        'fraction': 'fração',
+        'percentage': 'porcentagem',
+        'proportion': 'proporção',
+        'ratio': 'razão',
+        'rate': 'taxa',
+        'scale': 'escala',
+        'level': 'nível',
+        'degree': 'grau',
+        'extent': 'extensão',
+        'scope': 'escopo',
+        'range': 'alcance',
+        'span': 'amplitude',
+        'spectrum': 'espectro',
+        'variety': 'variedade',
+        'assortment': 'variedade',
+        'collection': 'coleção',
+        'set': 'conjunto',
+        'series': 'série',
+        'sequence': 'sequência',
+        'chain': 'cadeia',
+        'line': 'linha',
+        'row': 'linha',
+        'column': 'coluna',
+        'rank': 'fileira',
+        'tier': 'nível',
+        'layer': 'camada',
+        'stratum': 'estrato',
+        'level': 'nível',
+        'step': 'passo',
+        'stage': 'estágio',
+        'phase': 'fase',
+        'period': 'período',
+        'era': 'era',
+        'age': 'idade',
+        'epoch': 'época',
+        'generation': 'geração',
+        'cycle': 'ciclo',
+        'round': 'rodada',
+        'turn': 'turno',
+        'shift': 'turno',
+        'bout': 'episódio',
+        'spell': 'período',
+        'stretch': 'período',
+        'span': 'período',
+        'term': 'período',
+        'duration': 'duração',
+        'length': 'comprimento',
+        'width': 'largura',
+        'height': 'altura',
+        'depth': 'profundidade',
+        'size': 'tamanho',
+        'dimension': 'dimensão',
+        'measure': 'medida',
+        'measurement': 'medição',
+        'weight': 'peso',
+        'mass': 'massa',
+        'volume': 'volume',
+        'capacity': 'capacidade',
+        'area': 'área',
+        'space': 'espaço',
+        'room': 'espaço',
+        'place': 'lugar',
+        'spot': 'lugar',
+        'site': 'local',
+        'location': 'localização',
+        'position': 'posição',
+        'point': 'ponto',
+        'dot': 'ponto',
+        'mark': 'marca',
+        'sign': 'sinal',
+        'signal': 'sinal',
+        'symbol': 'símbolo',
+        'token': 'símbolo',
+        'emblem': 'emblema',
+        'badge': 'insígnia',
+        'logo': 'logotipo',
+        'brand': 'marca',
+        'label': 'etiqueta',
+        'tag': 'etiqueta',
+        'name': 'nome',
+        'title': 'título',
+        'heading': 'título',
+        'caption': 'legenda',
+        'heading': 'título',
+        'heading': 'título',
+        'heading': 'título',
+        'header': 'cabeçalho',
+        'footer': 'rodapé',
+        'margin': 'margem',
+        'border': 'borda',
+        'edge': 'borda',
+        'side': 'lado',
+        'end': 'fim',
+        'beginning': 'início',
+        'start': 'início',
+        'finish': 'fim',
+        'conclusion': 'conclusão',
+        'result': 'resultado',
+        'outcome': 'resultado',
+        'effect': 'efeito',
+        'consequence': 'consequência',
+        'impact': 'impacto',
+        'influence': 'influência',
+        'power': 'poder',
+        'force': 'força',
+        'strength': 'força',
+        'energy': 'energia',
+        'power': 'poder',
+        'might': 'poder',
+        'vigor': 'vigor',
+        'vitality': 'vitalidade',
+        'life': 'vida',
+        'spirit': 'espírito',
+        'soul': 'alma',
+        'heart': 'coração',
+        'mind': 'mente',
+        'brain': 'cérebro',
+        'thought': 'pensamento',
+        'idea': 'ideia',
+        'concept': 'conceito',
+        'notion': 'noção',
+        'belief': 'crença',
+        'opinion': 'opinião',
+        'view': 'visão',
+        'perspective': 'perspectiva',
+        'standpoint': 'ponto de vista',
+        'position': 'posição',
+        'stance': 'posição',
+        'attitude': 'atitude',
+        'approach': 'abordagem',
+        'method': 'método',
+        'way': 'jeito',
+        'means': 'meio',
+        'manner': 'maneira',
+        'mode': 'modo',
+        'style': 'estilo',
+        'fashion': 'moda',
+        'trend': 'tendência',
+        'pattern': 'padrão',
+        'model': 'modelo',
+        'example': 'exemplo',
+        'sample': 'amostra',
+        'specimen': 'amostra',
+        'instance': 'instância',
+        'case': 'caso',
+        'situation': 'situação',
+        'circumstance': 'circunstância',
+        'condition': 'condição',
+        'state': 'estado',
+        'status': 'status',
+        'condition': 'condição',
+        'health': 'saúde',
+        'fitness': 'aptidão',
+        'shape': 'forma',
+        'form': 'forma',
+        'condition': 'condição',
+        'grade': 'grau',
+        'rank': 'classificação',
+        'class': 'classe',
+        'category': 'categoria',
+        'type': 'tipo',
+        'kind': 'tipo',
+        'sort': 'tipo',
+        'variety': 'variedade',
+        'species': 'espécie',
+        'breed': 'raça',
+        'strain': 'linhagem',
+        'family': 'família',
+        'genus': 'gênero',
+        'order': 'ordem',
+        'group': 'grupo',
+        'set': 'conjunto',
+        'cluster': 'agrupamento',
+        'bunch': 'cacho',
+        'batch': 'lote',
+        'lot': 'lote',
+        'number': 'número',
+        'amount': 'quantidade',
+        'quantity': 'quantidade',
+        'total': 'total',
+        'sum': 'soma',
+        'aggregate': 'agregado',
+        'whole': 'todo',
+        'entire': 'inteiro',
+        'complete': 'completo',
+        'full': 'cheio',
+        'total': 'total',
+        'entire': 'inteiro',
+        'complete': 'completo',
+        'whole': 'inteiro',
+        'all': 'todos',
+        'each': 'cada',
+        'every': 'cada',
+        'both': 'ambos',
+        'either': 'um ou outro',
+        'neither': 'nenhum dos dois',
+        'any': 'qualquer',
+        'some': 'algum',
+        'many': 'muitos',
+        'much': 'muito',
+        'few': 'poucos',
+        'little': 'pouco',
+        'several': 'vários',
+        'numerous': 'numerosos',
+        'countless': 'inúmeros',
+        'endless': 'infinitos',
+        'infinite': 'infinito',
+        'eternal': 'eterno',
+        'permanent': 'permanente',
+        'temporary': 'temporário',
+        'transient': 'transitório',
+        'fleeting': 'passageiro',
+        'momentary': 'momentâneo',
+        'brief': 'breve',
+        'short': 'curto',
+        'long': 'longo',
+        'extended': 'estendido',
+        'prolonged': 'prolongado',
+        'lengthy': 'extenso',
+        'endless': 'sem fim',
+        'never-ending': 'sem fim',
+        'constant': 'constante',
+        'continuous': 'contínuo',
+        'perpetual': 'perpetual',
+        'unceasing': 'incessante',
+        'incessant': 'incessante',
+        'ceaseless': 'incessante',
+        'endless': 'sem fim',
+        'limitless': 'ilimitado',
+        'boundless': 'ilimitado',
+        'measureless': 'imensurável',
+        'immeasurable': 'imensurável',
+        'countless': 'inúmeros',
+        'innumerable': 'inúmeros',
+        'numberless': 'sem número',
+        'unnumbered': 'sem número',
+        'many': 'muitos',
+        'much': 'muito',
+        'numerous': 'numerosos',
+        'multiple': 'múltiplos',
+        'several': 'vários',
+        'some': 'alguns',
+        'any': 'qualquer',
+        'all': 'todos',
+        'every': 'cada',
+        'each': 'cada',
+        'both': 'ambos',
+        'either': 'um ou outro',
+        'neither': 'nenhum dos dois',
+        'none': 'nenhum',
+        'no one': 'ninguém',
+        'nobody': 'ninguém',
+        'nothing': 'nada',
+        'nowhere': 'em lugar nenhum',
+        'never': 'nunca',
+        'not': 'não',
+        'no': 'não',
+        'neither': 'nenhum',
+        'none': 'nenhum',
+        'nothing': 'nada',
+        'nobody': 'ninguém',
+        'no one': 'ninguém',
+        'nowhere': 'em lugar nenhum',
+        'never': 'nunca',
+        'not': 'não',
+        'no': 'não',
+        'neither': 'nenhum dos dois',
+        'none': 'nenhum',
+        'nothing': 'nada',
+        'nobody': 'ninguém',
+        'no one': 'ninguém',
+        'nowhere': 'em lugar nenhum',
+        'never': 'nunca',
+        'not': 'não',
+        'no': 'não',
+      };
+
+      /* ------------------------------------------------------------------
+         Contexto visual inteligente: enriquece queries de busca com termos
+         descritivos para garantir imagens que façam sentido visualmente.
+         ------------------------------------------------------------------ */
+      const VISUAL_CONTEXT_MAP = {
+        house: 'modern house architecture building exterior residential home',
+        home: 'modern house architecture building exterior residential home',
+        apartment: 'modern apartment building exterior residential',
+        building: 'modern building architecture exterior',
+        office: 'modern office building workplace interior',
+        school: 'school building education classroom exterior',
+        university: 'university campus building education',
+        hospital: 'hospital building healthcare medical exterior',
+        bank: 'bank building finance exterior',
+        restaurant: 'restaurant exterior dining food interior',
+        cafe: 'coffee shop interior espresso beverage',
+        coffee: 'coffee cup steaming hot beverage barista',
+        tea: 'tea cup hot beverage steeping',
+        water: 'glass water drink clear liquid',
+        juice: 'fruit juice glass fresh drink',
+        milk: 'glass milk cold beverage',
+        bread: 'fresh bread bakery loaf',
+        pizza: 'pizza slice food italian',
+        burger: 'hamburger fast food burger',
+        sandwich: 'sandwich food lunch',
+        cake: 'birthday cake dessert sweet',
+        ice: 'ice cream cone dessert sweet',
+        chocolate: 'chocolate bar sweet candy',
+        fruit: 'fresh fruits apple banana orange',
+        apple: 'red apple fruit fresh',
+        banana: 'banana fruit yellow fresh',
+        orange: 'orange fruit citrus fresh',
+        lemon: 'lemon fruit citrus fresh',
+        grape: 'grapes fruit fresh vine',
+        strawberry: 'strawberry fruit fresh red',
+        watermelon: 'watermelon fruit slice fresh',
+        pineapple: 'pineapple fruit tropical fresh',
+        car: 'modern car automobile vehicle exterior',
+        bus: 'bus public transport vehicle',
+        train: 'train railway vehicle station',
+        plane: 'airplane airplane flying sky airport',
+        ship: 'ship boat ocean water maritime',
+        boat: 'boat water maritime sailing',
+        bicycle: 'bicycle bike cycling transport',
+        motorcycle: 'motorcycle bike vehicle',
+        truck: 'truck vehicle transport cargo',
+        dog: 'cute dog puppy pet animal domestic',
+        cat: 'cute cat kitten pet animal domestic',
+        bird: 'bird animal nature flying',
+        fish: 'fish animal water aquatic',
+        horse: 'horse animal nature',
+        cow: 'cow animal farm livestock',
+        pig: 'pig animal farm livestock',
+        sheep: 'sheep animal farm livestock',
+        chicken: 'chicken animal farm bird',
+        duck: 'duck animal water bird',
+        lion: 'lion animal wild safari',
+        tiger: 'tiger animal wild safari',
+        bear: 'bear animal wild nature',
+        elephant: 'elephant animal wild safari',
+        giraffe: 'giraffe animal wild safari',
+        zebra: 'zebra animal wild safari',
+        monkey: 'monkey animal wild primate',
+        panda: 'panda animal wild nature',
+        koala: 'koala animal wild nature',
+        butterfly: 'butterfly insect nature wings',
+        bee: 'bee insect nature honey',
+        flower: 'colorful flowers garden nature bloom',
+        rose: 'red rose flower garden bloom',
+        sunflower: 'sunflower flower garden bloom',
+        tree: 'tree nature forest green leaves',
+        forest: 'forest nature trees green',
+        park: 'park nature garden trees grass',
+        garden: 'garden flowers plants nature',
+        mountain: 'mountain landscape nature peak',
+        river: 'river water nature landscape',
+        sea: 'sea ocean water waves beach',
+        ocean: 'ocean water waves deep blue',
+        beach: 'beach sand ocean summer vacation',
+        lake: 'lake water nature landscape',
+        waterfall: 'waterfall water nature landscape',
+        desert: 'desert sand dunes landscape',
+        island: 'island tropical ocean beach',
+        sky: 'blue sky clouds weather',
+        cloud: 'clouds sky weather fluffy',
+        rain: 'rain weather water drops storm',
+        snow: 'snow winter cold snowflake',
+        sun: 'sun bright sky daylight',
+        moon: 'moon night sky lunar',
+        star: 'stars night sky space',
+        night: 'night sky moon stars dark',
+        day: 'daylight sky bright sun',
+        morning: 'morning sunrise daylight bright',
+        evening: 'evening sunset sky orange',
+        sunset: 'sunset sky orange evening',
+        sunrise: 'sunrise sky morning bright',
+        fire: 'fire flames burning warm',
+        flame: 'fire flames burning warm',
+        candle: 'candle light flame warm',
+        light: 'light bulb bright illumination',
+        lamp: 'lamp light illumination interior',
+        book: 'open book reading education knowledge',
+        book2: 'book library education reading',
+        pen: 'pen writing stationery office',
+        pencil: 'pencil writing stationery school',
+        computer: 'computer laptop technology office',
+        laptop: 'laptop computer technology office',
+        phone: 'smartphone mobile phone technology',
+        camera: 'camera photography equipment',
+        music: 'musical instruments music notes sound',
+        guitar: 'guitar musical instrument music',
+        piano: 'piano musical instrument music',
+        violin: 'violin musical instrument music',
+        drum: 'drum musical instrument music',
+        clock: 'clock time watch wall',
+        watch: 'wristwatch time fashion',
+        heart: 'heart love organ red',
+        flower2: 'flower garden nature bloom',
+        love: 'heart love romance couple',
+        friend: 'friends people social group',
+        family: 'family people home together',
+        baby: 'baby infant child cute',
+        child: 'child kid children playground',
+        man: 'man person portrait male',
+        woman: 'woman person portrait female',
+        people: 'people crowd group social',
+        couple: 'couple love romance together',
+        wedding: 'wedding marriage bride groom',
+        party: 'party celebration people fun',
+        gift: 'gift present box surprise',
+        money: 'money cash currency dollar euro',
+        coin: 'coin money currency metal',
+        diamond: 'diamond jewelry gem stone',
+        ring: 'ring jewelry wedding gold',
+        crown: 'crown royalty king queen',
+        sword: 'sword weapon medieval knight',
+        shield: 'shield protection defense',
+        star2: 'star five-point shape symbol',
+        circle: 'circle shape geometric round',
+        square: 'square shape geometric',
+        triangle: 'triangle shape geometric',
+        road: 'road street highway travel',
+        bridge: 'bridge architecture structure',
+        tunnel: 'tunnel road transport',
+        door: 'door entrance home interior',
+        window: 'window glass house architecture',
+        chair: 'chair furniture interior',
+        table: 'table furniture interior',
+        sofa: 'sofa couch furniture living room',
+        bed: 'bed bedroom furniture sleep',
+        pillow: 'pillow bed bedroom sleep',
+        towel: 'towel bathroom cotton',
+        soap: 'soap bathroom clean',
+        toothbrush: 'toothbrush bathroom hygiene',
+        mirror: 'mirror glass reflection interior',
+        clock2: 'wall clock time interior',
+        calendar: 'calendar date schedule',
+        map: 'map geography world travel',
+        flag: 'flag country nation symbol',
+        globe: 'globe earth world geography',
+        earth: 'earth planet space globe',
+        sun2: 'sun bright star daylight',
+        planet: 'planet space astronomy',
+        galaxy: 'galaxy space stars universe',
+        rocket: 'rocket space travel launch',
+        astronaut: 'astronaut space suit helmet',
+        satellite: 'satellite space technology',
+        cloud2: 'cloud weather sky fluffy',
+        rainbow: 'rainbow sky weather colorful',
+        umbrella: 'umbrella rain weather',
+        shoes: 'shoes footwear fashion sneaker',
+        boot: 'boot footwear fashion',
+        hat: 'hat cap fashion head',
+        dress: 'dress clothing fashion woman',
+        shirt: 'shirt clothing fashion',
+        pants: 'pants clothing fashion trousers',
+        jacket: 'jacket clothing fashion coat',
+        coat: 'coat clothing fashion winter',
+        bag: 'bag handbag fashion accessory',
+        wallet: 'wallet money accessory fashion',
+        key: 'key lock door metal',
+        lock: 'lock key security door',
+        scissors: 'scissors office stationery cut',
+        glue: 'glue stationery office',
+        paper: 'paper document stationery white',
+        envelope: 'envelope mail letter stationery',
+        stamp: 'stamp post mail envelope',
+        ticket: 'ticket travel event admission',
+        passport: 'passport travel document',
+        suitcase: 'suitcase luggage travel bag',
+        backpack: 'backpack bag school travel',
+        umbrella2: 'umbrella rain protection',
+    };
+
+      /* ------------------------------------------------------------------
+         Pesquisa de imagens reais na API oficial do Wikimedia Commons.
+         Consulta em inglês e português, valida cada candidato no navegador
+         e só devolve uma URL que tenha carregado com sucesso.
+         ------------------------------------------------------------------ */
+      const IMAGE_STOPWORDS = new Set([
+        'the', 'a', 'an', 'of', 'to', 'in', 'on', 'at', 'for', 'and', 'or', 'but', 'is', 'are',
+        'was', 'were', 'be', 'been', 'being', 'with', 'by', 'from', 'as', 'that', 'this', 'it',
+        'its', 'you', 'your', 'he', 'she', 'they', 'we', 'i', 'me', 'my', 'our', 'their', 'his',
+        'her', 'not', 'no', 'do', 'does', 'did', 'have', 'has', 'had', 'will', 'would', 'can',
+        'could', 'should', 'may', 'might', 'must', 'very', 'just', 'so', 'than', 'then', 'there',
+        'here', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most',
+        'other', 'some', 'such', 'only', 'own', 'same', 'too', 'also', 'into', 'over', 'under',
+        'again', 'once', 'about', 'after', 'before', 'between', 'through', 'during', 'without',
+        'o', 'os', 'um', 'uma', 'uns', 'umas', 'de', 'do', 'da', 'dos', 'das', 'em',
+        'na', 'nos', 'nas', 'por', 'pelo', 'pela', 'para', 'com', 'sem', 'sob', 'sobre',
+        'que', 'se', 'ao', 'aos', 'à', 'às', 'num', 'numa', 'foi', 'foram', 'ser', 'estar',
+        'está', 'estão', 'tem', 'têm', 'ter', 'há', 'meu', 'minha', 'seu', 'sua', 'nosso',
+        'nossa', 'este', 'esta', 'esse', 'essa', 'aquele', 'aquela', 'isso', 'isto', 'aquilo',
+        'muito', 'mais', 'menos', 'já', 'não', 'sim', 'também', 'só', 'apenas', 'bem', 'mal',
+        'tão', 'então', 'assim',
+      ]);
+
+      /* ------------------------------------------------------------------
+         Expressões idiomáticas e termos figurados: a pesquisa usa o
+         significado visual, nunca a frase à letra. Assim evitam-se jogos,
+         filmes, marcas e logótipos que partilham o nome da expressão.
+         ------------------------------------------------------------------ */
+      const IDIOM_IMAGES = {
+        conversation: ['people talking conversation', 'friends laughing together'],
+        earlyBird: ['bird sunrise morning', 'bird meadow sunrise'],
+        cake: ['cake slice dessert', 'chocolate cake dessert'],
+        blueMoon: ['blue moon night sky', 'full moon night sky'],
+        study: ['student studying library', 'student reading books'],
+        sick: ['sick person bed', 'person resting bed'],
+        secret: ['people whispering secret', 'secret conversation whisper'],
+        heavyRain: ['heavy rain storm', 'rain storm street'],
+        multitask: ['multitasking office work', 'efficiency work desk'],
+        agreement: ['handshake agreement', 'people meeting agreement'],
+        expensive: ['price tag shopping', 'expensive shopping money'],
+        passingTime: ['clock time passing', 'hourglass time'],
+        runningLate: ['late clock time', 'person running late clock'],
+        helping: ['volunteer helping hands', 'people helping community'],
+        courage: ['soldier courage', 'brave determination'],
+        nightWork: ['late night office desk lamp', 'person working night laptop'],
+        target: ['hammer nail wood', 'target bullseye'],
+        caution: ['cliff edge lookout', 'mountain edge caution'],
+        budget: ['budget finance calculator', 'money budget planning'],
+        workout: ['gym workout exercise', 'fitness training gym'],
+        surprise: ['surprise people conversation', 'people talking surprise'],
+        stress: ['stressed person desk', 'stress frustration work'],
+        surrender: ['boxer towel ring', 'boxing towel'],
+        teamwork: ['teamwork collaboration meeting', 'team brainstorming'],
+        practice: ['piano practice', 'music practice piano'],
+        silverLining: ['sunlight through clouds', 'sun rays clouds'],
+        fire: ['fire flames', 'campfire flames'],
+        world: ['earth globe world', 'globe map world'],
+        safety: ['safety helmet worker', 'seatbelt safety'],
+        brightSide: ['sunny sky sunlight', 'sunbeam sky'],
+        curiousCat: ['curious cat', 'cat looking'],
+        picture: ['camera photograph', 'photographer camera'],
+        travel: ['open road travel', 'road trip car'],
+        watchful: ['eye looking closeup', 'watchful eye'],
+        serendipity: ['four leaf clover', 'sunlight forest path'],
+        saudade: ['person looking sea horizon', 'person window rain'],
+      };
+
+      const IDIOM_VISUAL_MAP = {
+        'break the ice': IDIOM_IMAGES.conversation,
+        'quebrar o gelo': IDIOM_IMAGES.conversation,
+        'cold feet': ['nervous person hesitating', 'person anxious before important decision'],
+        'frio nos pes': ['nervous person hesitating', 'person anxious before important decision'],
+        'the early bird catches the worm': IDIOM_IMAGES.earlyBird,
+        'deus ajuda quem cedo madruga': IDIOM_IMAGES.earlyBird,
+        'piece of cake': IDIOM_IMAGES.cake,
+        'mamão com açúcar': IDIOM_IMAGES.cake,
+        'once in a blue moon': IDIOM_IMAGES.blueMoon,
+        'hit the books': IDIOM_IMAGES.study,
+        'queimar as pestanas': IDIOM_IMAGES.study,
+        'under the weather': IDIOM_IMAGES.sick,
+        'spill the beans': IDIOM_IMAGES.secret,
+        'let the cat out of the bag': IDIOM_IMAGES.secret,
+        'dar com a língua nos dentes': IDIOM_IMAGES.secret,
+        'raining cats and dogs': IDIOM_IMAGES.heavyRain,
+        'chover canivetes': IDIOM_IMAGES.heavyRain,
+        'kill two birds with one stone': IDIOM_IMAGES.multitask,
+        'matar dois coelhos com uma cajadada só': IDIOM_IMAGES.multitask,
+        'see eye to eye': IDIOM_IMAGES.agreement,
+        'on the same page': IDIOM_IMAGES.agreement,
+        'estar na mesma página': IDIOM_IMAGES.agreement,
+        'cost an arm and a leg': IDIOM_IMAGES.expensive,
+        'custar os olhos da cara': IDIOM_IMAGES.expensive,
+        'time flies': IDIOM_IMAGES.passingTime,
+        'o tempo voa': IDIOM_IMAGES.passingTime,
+        'better late than never': IDIOM_IMAGES.runningLate,
+        'antes tarde do que nunca': IDIOM_IMAGES.runningLate,
+        'actions speak louder than words': IDIOM_IMAGES.helping,
+        'ações valem mais que palavras': IDIOM_IMAGES.helping,
+        'bite the bullet': IDIOM_IMAGES.courage,
+        'burn the midnight oil': IDIOM_IMAGES.nightWork,
+        'virar a noite': IDIOM_IMAGES.nightWork,
+        'hit the nail on the head': IDIOM_IMAGES.target,
+        'acertar na mosca': IDIOM_IMAGES.target,
+        'look before you leap': IDIOM_IMAGES.caution,
+        'olhar antes de pular': IDIOM_IMAGES.caution,
+        'make ends meet': IDIOM_IMAGES.budget,
+        'no pain no gain': IDIOM_IMAGES.workout,
+        'sem esforço não há recompensa': IDIOM_IMAGES.workout,
+        'speak of the devil': IDIOM_IMAGES.surprise,
+        'falar do rei de roma': IDIOM_IMAGES.surprise,
+        'the last straw': IDIOM_IMAGES.stress,
+        "a gota d'água": IDIOM_IMAGES.stress,
+        'throw in the towel': IDIOM_IMAGES.surrender,
+        'jogar a toalha': IDIOM_IMAGES.surrender,
+        'two heads are better than one': IDIOM_IMAGES.teamwork,
+        'duas cabeças pensam melhor': IDIOM_IMAGES.teamwork,
+        'practice makes perfect': IDIOM_IMAGES.practice,
+        'a prática leva à perfeição': IDIOM_IMAGES.practice,
+        'every cloud has a silver lining': IDIOM_IMAGES.silverLining,
+        'um mal que vem para o bem': IDIOM_IMAGES.silverLining,
+        'add fuel to the fire': IDIOM_IMAGES.fire,
+        'colocar lenha na fogueira': IDIOM_IMAGES.fire,
+        'it is a small world': IDIOM_IMAGES.world,
+        "it's a small world": IDIOM_IMAGES.world,
+        'o mundo é pequeno': IDIOM_IMAGES.world,
+        'better safe than sorry': IDIOM_IMAGES.safety,
+        'melhor prevenir do que remediar': IDIOM_IMAGES.safety,
+        'look on the bright side': IDIOM_IMAGES.brightSide,
+        'olhar o lado bom': IDIOM_IMAGES.brightSide,
+        'curiosity killed the cat': IDIOM_IMAGES.curiousCat,
+        'a curiosidade matou o gato': IDIOM_IMAGES.curiousCat,
+        'a picture is worth a thousand words': IDIOM_IMAGES.picture,
+        'uma imagem vale mais que mil palavras': IDIOM_IMAGES.picture,
+        'hit the road': IDIOM_IMAGES.travel,
+        'pegar a estrada': IDIOM_IMAGES.travel,
+        'keep an eye on': IDIOM_IMAGES.watchful,
+        'ficar de olho': IDIOM_IMAGES.watchful,
+        serendipity: IDIOM_IMAGES.serendipity,
+        serendipidade: IDIOM_IMAGES.serendipity,
+        saudade: IDIOM_IMAGES.saudade,
+        longing: IDIOM_IMAGES.saudade,
+      };
+
+      /* Títulos de mídia/desambiguação são rejeitados, exceto quando a
+         própria pesquisa é sobre esse tipo de conteúdo. */
+      const TITLE_BLOCK_TERMS = [
+        'logo', 'icon', 'diagram', 'map', 'chart', 'flag', 'coat of arms', 'seal',
+        'screenshot', 'poster', 'cover art', 'album cover', 'sign', 'plaque',
+        'stamp', 'banknote', 'coin', 'document', 'manuscript', 'graph', 'plot',
+        'scheme', 'symbol', 'clipart', 'banner', 'emblem', 'wordmark',
+        'video game', 'board game', 'tv series', 'television series',
+        'film poster', 'movie poster', 'title card', 'soundtrack', 'music video',
+        'disambiguation',
+      ];
+
+      /* Termos que, quando aparecem no título de um candidato, indicam que
+         o resultado é o sentido errado de uma palavra ambígua. A chave é o
+         termo de busca principal (sentido pretendido); o valor são termos que
+         evidenciam o sentido concorrente a ser rejeitado. Exemplo: "apple" a
+         fruta não deve ser resolvida com títulos de computador/marca Apple. */
+      const IMAGE_DISAMBIGUATION = {
+        apple: ['computer', 'macintosh', 'macbook', 'iphone', 'ipad', 'logo', 'brand', 'technology', 'store', 'apple park', 'apple store', 'tim cook', 'steve jobs', 'iphone', 'ipad'],
+      };
+
+      const MEDIA_TITLE_TAG = /\b(film|movie|tv|television|series|video game|board game|game|song|album|single|band|soundtrack|episode|disambiguation|franchise|character)\b/i;
+
+      /* Sinónimos usados só para aproximar o título ao significado da
+         consulta: o Commons raramente usa exatamente as mesmas palavras. */
+      const ANCHOR_SYNONYMS = {
+        people: ['person', 'friend', 'group', 'crowd', 'men', 'women'],
+        person: ['people', 'man', 'woman', 'men', 'women'],
+        man: ['person', 'people', 'men'],
+        woman: ['person', 'people', 'women'],
+        friend: ['people', 'group', 'together'],
+        talking: ['talk', 'chat', 'chatting', 'conversation', 'speak', 'speaking', 'discussion'],
+        conversation: ['talking', 'talk', 'chat', 'chatting', 'discussion'],
+        laughing: ['laugh', 'smiling', 'smile', 'happy'],
+        together: ['group', 'people', 'friend'],
+        sunrise: ['morning', 'dawn', 'sun'],
+        morning: ['sunrise', 'dawn'],
+        student: ['studying', 'study', 'pupil', 'learner'],
+        studying: ['study', 'student', 'reading', 'library'],
+        library: ['book', 'reading', 'study'],
+        secret: ['whisper', 'whispering', 'confidential'],
+        whisper: ['whispering', 'secret', 'murmur'],
+        rain: ['raining', 'rainy', 'storm'],
+        storm: ['rain', 'raining', 'thunder'],
+        work: ['working', 'office', 'desk'],
+        office: ['work', 'desk', 'workplace'],
+        gym: ['fitness', 'workout', 'exercise'],
+        workout: ['fitness', 'gym', 'exercise'],
+        money: ['cash', 'currency', 'banknote'],
+        shopping: ['shop', 'store', 'price', 'cost'],
+        price: ['tag', 'shopping', 'cost'],
+        clock: ['time', 'watch', 'hourglass'],
+        time: ['clock', 'hourglass'],
+        road: ['street', 'highway', 'travel'],
+        travel: ['trip', 'road', 'journey'],
+        cat: ['kitten'],
+        cake: ['dessert', 'sweet'],
+        team: ['teamwork', 'group', 'collaboration', 'meeting'],
+        teamwork: ['team', 'collaboration', 'meeting'],
+        meeting: ['team', 'office', 'collaboration'],
+        handshake: ['agreement', 'hand', 'shake'],
+        agreement: ['handshake', 'contract', 'signing'],
+        volunteer: ['help', 'helping', 'community'],
+        helping: ['help', 'volunteer', 'hand'],
+        soldier: ['army', 'military', 'brave'],
+        brave: ['courage', 'determination'],
+        eye: ['looking', 'watch', 'view'],
+        looking: ['look', 'watching', 'eye', 'view'],
+        world: ['earth', 'globe', 'planet'],
+        globe: ['earth', 'world', 'planet'],
+        fire: ['flame', 'campfire'],
+        flame: ['fire', 'campfire'],
+        night: ['dark', 'midnight', 'evening'],
+        late: ['clock', 'night'],
+        budget: ['finance', 'money', 'calculator'],
+        finance: ['money', 'budget', 'calculator'],
+        stress: ['stressed', 'frustration', 'pressure'],
+        stressed: ['stress', 'frustration', 'pressure'],
+        towel: ['boxer', 'boxing', 'ring'],
+        boxer: ['boxing', 'towel', 'ring'],
+        piano: ['music', 'practice'],
+        practice: ['practicing', 'piano', 'music'],
+        cloud: ['sky'],
+        sky: ['cloud', 'sunlight'],
+        sunlight: ['sun', 'sunbeam', 'light'],
+        safety: ['helmet', 'seatbelt', 'safe'],
+        picture: ['camera', 'photograph', 'photographer'],
+        camera: ['photograph', 'photographer', 'photo'],
+        sea: ['ocean', 'water', 'horizon'],
+        horizon: ['sea', 'ocean', 'sky'],
+        map: ['globe', 'world'],
+      };
+
+      function anchorVariants(anchor) {
+        const synonyms = ANCHOR_SYNONYMS[anchor];
+        return synonyms ? [anchor, ...synonyms] : [anchor];
+      }
+
+      function findIdiom(value) {
+        const normalized = normalizeTerm(value);
+        if (!normalized) return null;
+
+        let best = null;
+        let bestLength = 0;
+
+        for (const key of Object.keys(IDIOM_VISUAL_MAP)) {
+          const normalizedKey = normalizeTerm(key);
+          if (!normalizedKey || normalizedKey.length <= bestLength) continue;
+          if (` ${normalized} `.includes(` ${normalizedKey} `)) {
+            best = IDIOM_VISUAL_MAP[key];
+            bestLength = normalizedKey.length;
+          }
+        }
+
+        return best;
+      }
+
+      function findVisualContext(value) {
+        const normalized = normalizeTerm(value);
+        if (!normalized) return '';
+
+        if (VISUAL_CONTEXT_MAP[normalized]) return VISUAL_CONTEXT_MAP[normalized];
+
+        const tokens = normalized.split(' ');
+        if (tokens.length === 1 && VISUAL_CONTEXT_MAP[tokens[0]]) {
+          return VISUAL_CONTEXT_MAP[tokens[0]];
+        }
+
+        return '';
+      }
+
+      function stemToken(token) {
+        if (token.length > 4 && token.endsWith('ies')) return `${token.slice(0, -3)}y`;
+        if (token.length > 3 && token.endsWith('s') && !token.endsWith('ss')) return token.slice(0, -1);
+        return token;
+      }
+
+      function imageWords(value) {
+        return normalizeTerm(value)
+          .split(' ')
+          .filter((token) => token.length > 2 && !IMAGE_STOPWORDS.has(token));
+      }
+
+      function imageTokens(value) {
+        return imageWords(value).map(stemToken);
+      }
+
+      function contextQuery(value) {
+        const words = imageWords(value).slice(0, 3);
+        return words.join(' ');
+      }
+
+      function isBlockedTitle(title, query) {
+        const titleNorm = normalizeTerm(title);
+        const queryNorm = normalizeTerm(query);
+        const tag = String(title).match(/\(([^)]+)\)/);
+
+        if (tag) {
+          const tagNorm = normalizeTerm(tag[1]);
+          if (MEDIA_TITLE_TAG.test(tagNorm) && !queryNorm.includes(tagNorm)) return true;
+        }
+
+        for (const term of TITLE_BLOCK_TERMS) {
+          if (!titleNorm.includes(term)) continue;
+          if (queryNorm.includes(term)) continue;
+          return true;
+        }
+
+        return false;
+      }
+
+      function hasTitleConflict(title, query) {
+        const titleNorm = normalizeTerm(title);
+        const tokens = String(query || '').split(' ');
+
+        for (const token of tokens) {
+          const normToken = normalizeTerm(token);
+          const conflictTerms = IMAGE_DISAMBIGUATION[normToken];
+          if (!conflictTerms) continue;
+
+          for (const conflict of conflictTerms) {
+            if (titleNorm.includes(normalizeTerm(conflict))) return true;
+          }
+        }
+
+        return false;
+      }
+
+      function scoreImageCandidate(title, query, apiRank) {
+        const titleNorm = normalizeTerm(title);
+        const queryNorm = normalizeTerm(query);
+        const titleTokens = new Set(titleNorm.split(' ').filter(Boolean).map(stemToken));
+        const anchors = imageTokens(query);
+        if (!anchors.length) return null;
+
+        let exact = 0;
+        let partial = 0;
+
+        for (const anchor of anchors) {
+          const variants = anchorVariants(anchor);
+          let hit = '';
+
+          for (const variant of variants) {
+            if (titleTokens.has(variant)) {
+              hit = 'exact';
+              break;
+            }
+          }
+
+          if (!hit) {
+            /* Títulos do Commons juntam palavras ("FullMoon2010"): aceita
+               correspondência parcial só para termos com 4+ letras. */
+            for (const variant of variants) {
+              if (variant.length >= 4 && titleNorm.includes(variant)) {
+                hit = 'partial';
+                break;
+              }
+            }
+          }
+
+          if (hit === 'exact') exact += 1;
+          else if (hit === 'partial') partial += 1;
+        }
+
+        const matched = exact + partial;
+        if (!matched) return null;
+
+        const coverage = matched / anchors.length;
+        let score = Math.max(0, 8 - apiRank) * 0.6;
+        score += exact * 5 + partial * 2.5;
+        score += coverage * 10;
+        if (queryNorm.length >= 3 && titleNorm.includes(queryNorm)) score += 8;
+        if (queryNorm.length >= 3 && titleNorm.startsWith(queryNorm)) score += 4;
+
+        const extra = Math.max(0, titleTokens.size - matched);
+        if (extra > 4) score -= Math.min(8, (extra - 4) * 1.5);
+
+        return { score, coverage, matched, anchors: anchors.length, exact, partial };
+      }
+
+      function isRelevantImage(candidate) {
+        if (!candidate || candidate.blocked || candidate.conflict) return false;
+
+        const { anchors, matched, coverage, score } = candidate;
+
+        if (anchors === 1) return matched >= 1 && score >= 5;
+        if (anchors === 2) return matched >= 1 && score >= 8;
+        return matched >= Math.ceil(anchors / 2) && coverage >= 0.5 && score >= 10;
+      }
+
+      function extractKeywords(text) {
+        return cleanText(text)
+          .toLowerCase()
+          .split(' ')
+          .filter((word) => word.length > 2 && !IMAGE_STOPWORDS.has(word))
+          .slice(0, 4)
+          .join(' ');
+      }
+
+      function buildImageQueries(translation, original) {
+        const [sourceLang] = state.direction.split('-');
+        const translated = cleanText(translation);
+        const source = cleanText(original);
+        const englishTerm = sourceLang === 'en' ? source : translated;
+        const localTerm = sourceLang === 'en' ? translated : source;
+
+        const pushQuery = (list, value) => {
+          const query = cleanText(value);
+          const normalized = normalizeTerm(query);
+          if (normalized.length < 2) return;
+          if (list.some((existing) => normalizeTerm(existing) === normalized)) return;
+          list.push(query);
+        };
+
+        const idiomQueries = findIdiom(englishTerm)
+          || findIdiom(source)
+          || findIdiom(localTerm)
+          || findIdiom(translated);
+
+        if (idiomQueries) {
+          /* Expressões idiomáticas: nunca pesquisar a frase à letra. */
+          const englishStage = [];
+          for (const query of idiomQueries.slice(0, 2)) pushQuery(englishStage, query);
+
+          const broader = extractKeywords(idiomQueries.join(' '));
+          const alternativeStage = [];
+          if (broader) pushQuery(alternativeStage, broader);
+
+          return {
+            idiom: true,
+            stages: [
+              { lang: 'en', queries: englishStage },
+              { lang: 'pt', queries: alternativeStage },
+            ].filter((stage) => stage.queries.length),
+          };
+        }
+
+        /* Prioriza o inglês (o Commons é indexado sobretudo nesse idioma),
+           enriquecendo termos concretos com contexto visual. O português
+           fica como alternativa, usada apenas se o inglês não servir. */
+        const englishStage = [];
+        const englishWords = imageWords(englishTerm);
+        const contextEn = findVisualContext(englishTerm);
+        if (contextEn) pushQuery(englishStage, contextQuery(contextEn));
+
+        /* Frases longas: o contexto vem das palavras-chave reconhecidas. */
+        for (const word of englishWords) {
+          const context = VISUAL_CONTEXT_MAP[word];
+          if (!context) continue;
+          pushQuery(englishStage, word);
+          pushQuery(englishStage, contextQuery(context));
+        }
+
+        pushQuery(englishStage, extractKeywords(englishTerm));
+        if (englishWords.length <= 4) pushQuery(englishStage, englishTerm);
+
+        const localStage = [];
+        const localWords = imageWords(localTerm);
+        const contextLocal = findVisualContext(localTerm);
+        if (contextLocal) pushQuery(localStage, contextQuery(contextLocal));
+
+        for (const word of localWords) {
+          const context = VISUAL_CONTEXT_MAP[word];
+          if (!context) continue;
+          pushQuery(localStage, word);
+          pushQuery(localStage, contextQuery(context));
+        }
+
+        pushQuery(localStage, extractKeywords(localTerm));
+        if (localWords.length <= 4) pushQuery(localStage, localTerm);
+
+        const englishNormalized = new Set(englishStage.map(normalizeTerm));
+        const hasNewLocalQuery = localStage.some(
+          (query) => !englishNormalized.has(normalizeTerm(query))
+        );
+
+        return {
+          idiom: false,
+          stages: [
+            { lang: 'en', queries: englishStage.slice(0, 3) },
+            { lang: 'pt', queries: hasNewLocalQuery ? localStage.slice(0, 3) : [] },
+          ].filter((stage) => stage.queries.length),
+        };
+      }
+
+      function toHttpUrl(value) {
+        try {
+          const url = new URL(String(value), window.location.href);
+          return /^https?:$/.test(url.protocol) ? url.href : '';
+        } catch (error) {
+          return '';
+        }
+      }
+
+      async function searchCommonsOnce(query, signal) {
+        const params = new URLSearchParams({
+          action: 'query',
+          format: 'json',
+          origin: '*',
+          generator: 'search',
+          gsrsearch: `filetype:bitmap ${query}`,
+          gsrnamespace: '6',
+          gsrlimit: String(IMAGES.searchLimit),
+          prop: 'imageinfo',
+          iiprop: 'url|size|mime',
+          iiurlwidth: '1280',
+        });
+
+        const response = await fetchWithTimeout(
+          `${IMAGES.commons}?${params.toString()}`,
+          { signal },
+          IMAGES.timeout
+        );
+        if (!response.ok) throw new Error(`A busca de imagens falhou (HTTP ${response.status}).`);
+
+        let data;
+        try {
+          data = await response.json();
+        } catch (error) {
+          throw new Error('A busca de imagens retornou uma resposta inválida.');
+        }
+
+        const pages = Object.values(data?.query?.pages || {}).sort(
+          (a, b) => (Number(a.index) || 0) - (Number(b.index) || 0)
+        );
+        const candidates = [];
+
+        pages.forEach((page, position) => {
+          const info = page?.imageinfo?.[0];
+          if (!info) return;
+
+          const title = String(page.title || '').replace(/^File:/i, '');
+          if (!title) return;
+
+          /* Apenas bitmaps raster: ícones, SVG e documentos não ilustram. */
+          if (info.mime && !/^image\/(jpeg|png|webp)$/i.test(String(info.mime))) return;
+          const width = Number(info.thumbwidth) || Number(info.width) || 0;
+          if (width && width < 400) return;
+
+          /* A URL vem sempre da API (thumburl), nunca é construída à mão. */
+          const url = toHttpUrl(info.thumburl || info.url);
+          if (!url) return;
+
+          candidates.push({
+            url,
+            title,
+            index: Number(page.index) || position + 1,
+          });
+        });
+
+        return candidates;
+      }
+
+      async function searchCommonsStage(queries, signal) {
+        const settled = await Promise.allSettled(
+          queries.map((query) => searchCommonsOnce(query, signal))
+        );
+
+        if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
+
+        let abortError = null;
+        const bestByTitle = new Map();
+
+        settled.forEach((result, rank) => {
+          if (result.status !== 'fulfilled') {
+            if (result.reason?.name === 'AbortError') abortError = result.reason;
+            return;
+          }
+
+          const query = queries[rank];
+
+          for (const item of result.value) {
+            const metrics = scoreImageCandidate(item.title, query, item.index);
+            if (!metrics) continue;
+
+            const blocked = isBlockedTitle(item.title, query);
+            const conflict = hasTitleConflict(item.title, query);
+            const candidate = {
+              url: item.url,
+              title: item.title,
+              query,
+              blocked,
+              conflict,
+              score: metrics.score + Math.max(0, 3 - rank) * 2,
+              coverage: metrics.coverage,
+              matched: metrics.matched,
+              anchors: metrics.anchors,
+              exact: metrics.exact,
+              partial: metrics.partial,
+            };
+            candidate.relevant = isRelevantImage(candidate);
+
+            /* Evita recortes do mesmo ficheiro (ex.: tiles "-x0-y1"). */
+            const key = normalizeTerm(item.title.replace(/-x\d+-y\d+/gi, ''));
+            const previous = bestByTitle.get(key);
+
+            if (!previous) {
+              bestByTitle.set(key, candidate);
+              continue;
+            }
+            if (candidate.relevant !== previous.relevant) {
+              if (candidate.relevant) bestByTitle.set(key, candidate);
+              continue;
+            }
+            if (candidate.score > previous.score) bestByTitle.set(key, candidate);
+          }
+        });
+
+        if (abortError) throw abortError;
+
+        return [...bestByTitle.values()]
+          .sort((a, b) => Number(b.relevant) - Number(a.relevant) || b.score - a.score)
+          .slice(0, 12);
+      }
+
+      function preloadImage(url, timeoutMs = 6000, signal) {
+        return new Promise((resolve, reject) => {
+          if (signal?.aborted) {
+            reject(new DOMException('Aborted', 'AbortError'));
+            return;
+          }
+
+          const image = new Image();
+          let settled = false;
+          let timer;
+
+          const cleanup = () => {
+            clearTimeout(timer);
+            image.onload = null;
+            image.onerror = null;
+            signal?.removeEventListener('abort', onAbort);
+          };
+
+          const finish = (callback, value) => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            callback(value);
+          };
+
+          const onAbort = () => {
+            image.src = '';
+            finish(reject, new DOMException('Aborted', 'AbortError'));
+          };
+
+          timer = setTimeout(() => {
+            finish(reject, new Error('A imagem demorou demais para carregar.'));
+          }, timeoutMs);
+
+          signal?.addEventListener('abort', onAbort, { once: true });
+
+          image.onload = () => finish(resolve, url);
+          image.onerror = () => finish(reject, new Error('A imagem não pôde ser carregada.'));
+          image.src = url;
+        });
+      }
+
+      async function fetchIllustration(translation, original, signal) {
+        const plan = buildImageQueries(translation, original);
+
+        for (const stage of plan.stages) {
+          if (signal?.aborted) return null;
+
+          let candidates;
+          try {
+            candidates = await searchCommonsStage(stage.queries, signal);
+          } catch (error) {
+            if (error?.name === 'AbortError' || signal?.aborted) return null;
+            continue;
+          }
+
+          /* Só candidatos que passaram a classificação semântica. */
+          const relevant = candidates.filter((candidate) => candidate.relevant);
+
+          for (const candidate of relevant.slice(0, IMAGES.maxAttempts)) {
+            if (signal?.aborted) return null;
+            try {
+              await preloadImage(candidate.url, IMAGES.validateTimeout, signal);
+              return { url: candidate.url, source: 'Wikimedia Commons' };
+            } catch (error) {
+              if (error?.name === 'AbortError' || signal?.aborted) return null;
+              /* Imagem indisponível: tenta o candidato seguinte. */
+            }
+          }
+
+          /* Nada suficientemente relevante nesta etapa: tenta a seguinte. */
+        }
+
+        return null;
+      }
+
+      /* ------------------------------------------------------------------
+         Ilustrações com IA — Pollinations Classic (público, sem chave)
+         ------------------------------------------------------------------ */
+      function openAiCache() {
+        if (typeof indexedDB === 'undefined') return Promise.resolve(null);
+        if (aiCachePromise) return aiCachePromise;
+
+        aiCachePromise = new Promise((resolve) => {
+          let request;
+
+          try {
+            request = indexedDB.open(AI_IMAGES.cacheDb, 1);
+          } catch (error) {
+            resolve(null);
+            return;
+          }
+
+          request.onupgradeneeded = () => {
+            const db = request.result;
+            if (!db.objectStoreNames.contains(AI_IMAGES.cacheStore)) {
+              db.createObjectStore(AI_IMAGES.cacheStore, { keyPath: 'key' });
+            }
+            if (!db.objectStoreNames.contains('meta')) {
+              db.createObjectStore('meta', { keyPath: 'key' });
+            }
+          };
+
+          request.onsuccess = () => {
+            const db = request.result;
+            db.onversionchange = () => db.close();
+            resolve(db);
+          };
+          request.onerror = () => resolve(null);
+          request.onblocked = () => resolve(null);
+        });
+
+        return aiCachePromise;
+      }
+
+      function aiMemoryGet(key) {
+        const entry = aiMemoryCache.get(key);
+        if (!entry) return null;
+
+        aiMemoryCache.delete(key);
+        entry.lastUsed = Date.now();
+        aiMemoryCache.set(key, entry);
+        return entry.blob;
+      }
+
+      function aiMemorySet(key, blob) {
+        aiMemoryCache.delete(key);
+        aiMemoryCache.set(key, { blob, lastUsed: Date.now() });
+
+        while (aiMemoryCache.size > AI_IMAGES.memoryEntries) {
+          const oldest = aiMemoryCache.keys().next().value;
+          aiMemoryCache.delete(oldest);
+        }
+      }
+
+      function aiCacheTouch(db, key) {
+        try {
+          const tx = db.transaction('meta', 'readwrite');
+          const store = tx.objectStore('meta');
+          const request = store.get(key);
+          request.onsuccess = () => {
+            const info = request.result;
+            if (!info) return;
+            info.lastUsed = Date.now();
+            store.put(info);
+          };
+        } catch (error) {
+          /* cache local é best-effort */
+        }
+      }
+
+      async function aiCacheGet(key) {
+        const memory = aiMemoryGet(key);
+        if (memory) return memory;
+
+        const db = await openAiCache();
+        if (!db) return null;
+
+        try {
+          const record = await new Promise((resolve) => {
+            const tx = db.transaction([AI_IMAGES.cacheStore, 'meta'], 'readonly');
+            const blobs = tx.objectStore(AI_IMAGES.cacheStore);
+            const blobRequest = blobs.get(key);
+            let blob = null;
+
+            blobRequest.onsuccess = () => {
+              blob = blobRequest.result?.blob || null;
+            };
+
+            tx.oncomplete = () => resolve(blob);
+            tx.onerror = () => resolve(null);
+            tx.onabort = () => resolve(null);
+          });
+
+          if (!record) return null;
+
+          aiMemorySet(key, record);
+          aiCacheTouch(db, key);
+          return record;
+        } catch (error) {
+          return null;
+        }
+      }
+
+      async function aiCachePrune(db) {
+        let entries = [];
+
+        try {
+          entries = await new Promise((resolve) => {
+            const tx = db.transaction('meta', 'readonly');
+            const request = tx.objectStore('meta').getAll();
+            request.onsuccess = () => resolve(request.result || []);
+            request.onerror = () => resolve([]);
+          });
+        } catch (error) {
+          return;
+        }
+
+        let count = entries.length;
+        let total = entries.reduce((sum, entry) => sum + (Number(entry.bytes) || 0), 0);
+        if (count <= AI_IMAGES.maxEntries && total <= AI_IMAGES.maxBytes) return;
+
+        entries.sort(
+          (a, b) =>
+            (Number(a.lastUsed) || Number(a.createdAt) || 0) -
+            (Number(b.lastUsed) || Number(b.createdAt) || 0)
+        );
+
+        const doomed = [];
+        for (const entry of entries) {
+          if (count <= AI_IMAGES.maxEntries && total <= AI_IMAGES.maxBytes) break;
+          doomed.push(entry.key);
+          count -= 1;
+          total -= Number(entry.bytes) || 0;
+        }
+
+        if (!doomed.length) return;
+
+        try {
+          await new Promise((resolve) => {
+            const tx = db.transaction([AI_IMAGES.cacheStore, 'meta'], 'readwrite');
+            const blobs = tx.objectStore(AI_IMAGES.cacheStore);
+            const meta = tx.objectStore('meta');
+
+            doomed.forEach((key) => {
+              blobs.delete(key);
+              meta.delete(key);
+              aiMemoryCache.delete(key);
+            });
+
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => resolve();
+            tx.onabort = () => resolve();
+          });
+        } catch (error) {
+          /* cache local é best-effort */
+        }
+      }
+
+      async function aiCacheSet(key, blob, meta) {
+        aiMemorySet(key, blob);
+
+        const db = await openAiCache();
+        if (!db) return;
+
+        try {
+          await new Promise((resolve) => {
+            const tx = db.transaction([AI_IMAGES.cacheStore, 'meta'], 'readwrite');
+            const now = Date.now();
+            tx.objectStore(AI_IMAGES.cacheStore).put({ key, blob, createdAt: now });
+            tx.objectStore('meta').put({
+              key,
+              bytes: blob.size,
+              createdAt: now,
+              lastUsed: now,
+              term: String(meta.term || '').slice(0, 80),
+              prompt: String(meta.prompt || '').slice(0, 400),
+            });
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => resolve();
+            tx.onabort = () => resolve();
+          });
+        } catch (error) {
+          return;
+        }
+
+        aiCachePrune(db).catch(() => {});
+      }
+
+      function buildAiSubject(englishTerm, localTerm, sourceText) {
+        const full = normalizeTerm(englishTerm);
+        const local = normalizeTerm(localTerm);
+
+        if (AI_SUBJECT_MAP[full]) return AI_SUBJECT_MAP[full];
+        if (AI_SUBJECT_MAP[local]) return AI_SUBJECT_MAP[local];
+
+        for (const [key, value] of Object.entries(AI_SUBJECT_MAP)) {
+          if (key.includes(' ') && ` ${full} `.includes(` ${key} `)) return value;
+          if (key.includes(' ') && ` ${local} `.includes(` ${key} `)) return value;
+        }
+
+        const idiom = findIdiom(englishTerm) || findIdiom(localTerm) || findIdiom(sourceText);
+        if (idiom && idiom.length) return cleanText(idiom[0]);
+
+        const context = findVisualContext(englishTerm) || findVisualContext(localTerm);
+        if (context) return cleanText(context);
+
+        if (imageWords(englishTerm).length > 5) return extractKeywords(englishTerm);
+        return cleanText(englishTerm || localTerm);
+      }
+
+      function buildAiPrompt(term, original) {
+        const [sourceLang] = state.direction.split('-');
+        const englishTerm = cleanText(sourceLang === 'en' ? original : term);
+        const localTerm = cleanText(sourceLang === 'en' ? term : original);
+        const subject = truncate(buildAiSubject(englishTerm, localTerm, original), 140)
+          .replace(/["'`]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        const prompt = `Clear, informative photograph illustrating: ${subject}. Simple centered composition, natural lighting, realistic depiction, easy to recognize the meaning. No text, no letters, no numbers, no watermark, no logo.`;
+
+        return { prompt: truncate(prompt, AI_IMAGES.maxPromptLength), subject };
+      }
+
+      function aiSeed(prompt, variant) {
+        return (hashString(`${AI_IMAGES.cacheVersion}|${prompt}`) + variant * 7919) % 1000000;
+      }
+
+      function aiCacheKey(prompt, seed) {
+        return `${AI_IMAGES.cacheVersion}|${AI_IMAGES.width}x${AI_IMAGES.height}|${seed}|${prompt}`;
+      }
+
+      function validateAiBlob(blob, signal) {
+        return new Promise((resolve, reject) => {
+          if (signal?.aborted) {
+            reject(new DOMException('Aborted', 'AbortError'));
+            return;
+          }
+
+          const objectUrl = URL.createObjectURL(blob);
+          const image = new Image();
+          let settled = false;
+          let timer;
+
+          const cleanup = () => {
+            clearTimeout(timer);
+            URL.revokeObjectURL(objectUrl);
+            image.onload = null;
+            image.onerror = null;
+            signal?.removeEventListener('abort', onAbort);
+          };
+
+          const finish = (callback, value) => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            callback(value);
+          };
+
+          const onAbort = () => finish(reject, new DOMException('Aborted', 'AbortError'));
+
+          timer = setTimeout(() => finish(reject, new Error('image-decode-timeout')), AI_IMAGES.validateTimeout);
+          signal?.addEventListener('abort', onAbort, { once: true });
+
+          image.onload = () => {
+            if (image.naturalWidth < 200 || image.naturalHeight < 120) {
+              finish(reject, new Error('image-too-small'));
+              return;
+            }
+            finish(resolve, true);
+          };
+          image.onerror = () => finish(reject, new Error('image-decode-failed'));
+          image.src = objectUrl;
+        });
+      }
+
+      function setAiStatus(message, tone = 'info') {
+        const element = refs.aiStatus;
+        if (!element) return;
+
+        element.textContent = message || '';
+        element.classList.toggle('is-hidden', !message);
+
+        const colors = {
+          info: 'rgba(148, 163, 184, 0.95)',
+          success: 'rgba(110, 231, 183, 0.95)',
+          warn: 'rgba(252, 211, 77, 0.95)',
+        };
+        element.style.color = colors[tone] || colors.info;
+      }
+
+      function updateAiButton() {
+        if (!refs.aiBtn) return;
+
+        const hasTerm = Boolean(state.translation);
+        const aiShown = state.card?.kind === 'image' && state.imageSource === AI_SOURCE_LABEL;
+        const blocked = Date.now() < Number(state.aiBlockedUntil || 0);
+
+        refs.aiBtn.disabled = !hasTerm || state.aiBusy || blocked;
+        refs.aiBtn.classList.toggle('opacity-70', refs.aiBtn.disabled);
+        refs.aiBtn.title = aiShown ? 'Gerar outra ilustração com IA' : 'Gerar ilustração com IA (Pollinations)';
+
+        refs.aiBtn.querySelectorAll('[data-ai-label]').forEach((label) => {
+          if (label.classList.contains('sm:hidden')) return;
+          label.textContent = aiShown ? 'Gerar outra com IA' : 'Gerar com IA';
+        });
+      }
+
+      function releaseAiObjectUrl() {
+        if (!state.aiObjectUrl) return;
+        URL.revokeObjectURL(state.aiObjectUrl);
+        state.aiObjectUrl = '';
+      }
+
+      function showAiBlob(blob, fromCache) {
+        const objectUrl = URL.createObjectURL(blob);
+        const previous = state.aiObjectUrl;
+
+        state.aiObjectUrl = objectUrl;
+        state.imageUrl = objectUrl;
+        state.imageSource = AI_SOURCE_LABEL;
+        state.card.kind = 'image';
+
+        finalizeCard({
+          term: state.translation,
+          original: state.sourceText,
+          concept: state.card.concept,
+          variant: state.card.variant,
+          label: state.card.label,
+          animate: true,
+        });
+
+        refs.conceptBadge.textContent = 'Ilustração gerada por IA';
+        setAiStatus(
+          fromCache
+            ? 'Ilustração recuperada da cache local.'
+            : 'Ilustração gerada com IA · Pollinations.',
+          'success'
+        );
+
+        if (previous) URL.revokeObjectURL(previous);
+      }
+
+      function handleAiError(error, timedOut) {
+        state.aiBusy = false;
+        updateAiButton();
+
+        if (error?.name === 'AbortError') {
+          if (timedOut) {
+            setAiStatus(
+              `A geração excedeu ${Math.round(AI_IMAGES.timeout / 1000)} s e foi cancelada. Tente novamente.`,
+              'warn'
+            );
+          }
+          return;
+        }
+
+        if (error?.status === 402) {
+          const seconds = Math.max(1, Math.ceil(Number(error.retryAfter) || 15));
+          state.aiBlockedUntil = Date.now() + seconds * 1000;
+          setAiStatus(
+            `Limite temporário do serviço de IA (HTTP 402). Tente novamente em ${seconds} s.`,
+            'warn'
+          );
+
+          clearTimeout(state.aiCooldownTimer);
+          state.aiCooldownTimer = setTimeout(() => {
+            state.aiBlockedUntil = 0;
+            updateAiButton();
+          }, seconds * 1000 + 100);
+
+          updateAiButton();
+          return;
+        }
+
+        if (error?.status) {
+          setAiStatus(`O serviço de IA respondeu HTTP ${error.status}. Tente novamente mais tarde.`, 'warn');
+          return;
+        }
+
+        if (error?.message === 'invalid-content-type') {
+          setAiStatus('O serviço de IA devolveu um conteúdo que não é uma imagem.', 'warn');
+          return;
+        }
+
+        if (error?.message === 'empty-image' || error?.message === 'oversized-image') {
+          setAiStatus('A imagem recebida é inválida ou demasiado grande.', 'warn');
+          return;
+        }
+
+        if (
+          error?.message === 'image-too-small' ||
+          error?.message === 'image-decode-failed' ||
+          error?.message === 'image-decode-timeout'
+        ) {
+          setAiStatus('A imagem recebida não pôde ser validada.', 'warn');
+          return;
+        }
+
+        setAiStatus('Não foi possível gerar a ilustração com IA.', 'warn');
+      }
+
+      async function generateAiCard() {
+        if (!state.translation || !state.card || state.aiBusy) return;
+
+        if (Date.now() < Number(state.aiBlockedUntil || 0)) {
+          const seconds = Math.ceil((state.aiBlockedUntil - Date.now()) / 1000);
+          setAiStatus(`Aguarde ${seconds} s antes de tentar novamente.`, 'warn');
+          return;
+        }
+
+        const requestId = state.imageRequest;
+        const term = state.translation;
+        const original = state.sourceText;
+        const { prompt, subject } = buildAiPrompt(term, original);
+
+        state.aiVariant += 1;
+        const variant = state.aiVariant;
+        const seed = aiSeed(prompt, variant);
+        const key = aiCacheKey(prompt, seed);
+
+        state.aiBusy = true;
+        updateAiButton();
+        setAiStatus(`Gerando ilustração para “${truncate(subject, 70)}”…`);
+
+        const cached = await aiCacheGet(key);
+        if (requestId !== state.imageRequest) {
+          state.aiBusy = false;
+          updateAiButton();
+          return;
+        }
+
+        if (cached) {
+          showAiBlob(cached, true);
+          state.aiBusy = false;
+          updateAiButton();
+          return;
+        }
+
+        const controller = new AbortController();
+        state.aiAbort?.abort();
+        state.aiAbort = controller;
+
+        let timedOut = false;
+        const timer = setTimeout(() => {
+          timedOut = true;
+          controller.abort();
+        }, AI_IMAGES.timeout);
+
+        try {
+          const query = new URLSearchParams({
+            width: String(AI_IMAGES.width),
+            height: String(AI_IMAGES.height),
+            seed: String(seed),
+            safe: 'true',
+          });
+          const url = `${AI_IMAGES.endpoint}${encodeURIComponent(prompt)}?${query.toString()}`;
+          const response = await fetch(url, {
+            signal: controller.signal,
+            headers: { Accept: 'image/*' },
+          });
+
+          if (!response.ok) {
+            const error = new Error(`HTTP ${response.status}`);
+            error.status = response.status;
+            error.retryAfter = Number(response.headers.get('Retry-After')) || 0;
+            throw error;
+          }
+
+          const contentType = String(response.headers.get('content-type') || '');
+          if (!/^image\//i.test(contentType)) throw new Error('invalid-content-type');
+
+          const blob = await response.blob();
+          if (!blob.size) throw new Error('empty-image');
+          if (blob.size > AI_IMAGES.maxBlobBytes) throw new Error('oversized-image');
+
+          await validateAiBlob(blob, controller.signal);
+
+          if (requestId !== state.imageRequest) return;
+
+          aiCacheSet(key, blob, { term, prompt }).catch(() => {});
+          showAiBlob(blob, false);
+        } catch (error) {
+          if (requestId !== state.imageRequest) return;
+          if (controller.signal.aborted && !timedOut) return;
+          handleAiError(error, timedOut);
+        } finally {
+          clearTimeout(timer);
+          if (state.aiAbort === controller) state.aiAbort = null;
+          state.aiBusy = false;
+          updateAiButton();
+        }
+      }
 
       /* ------------------------------------------------------------------
          Inicialização
@@ -1684,11 +5051,13 @@
         refs.pasteBtn.addEventListener('click', handlePaste);
         refs.copyBtn.addEventListener('click', copyTranslation);
         refs.speakBtn.addEventListener('click', speakTranslation);
-        refs.regenerateBtn.addEventListener('click', regenerateImage);
-        refs.retryImageBtn.addEventListener('click', retryImage);
+        refs.regenerateBtn.addEventListener('click', regenerateCard);
+        refs.aiBtn.addEventListener('click', generateAiCard);
         refs.retryTranslateBtn.addEventListener('click', handleTranslate);
         refs.expandImageBtn.addEventListener('click', openLightbox);
-        refs.downloadImageBtn.addEventListener('click', downloadImage);
+        refs.downloadImageBtn.addEventListener('click', downloadCardSvg);
+        refs.downloadPngBtn.addEventListener('click', downloadCardPng);
+        refs.downloadSvgBtn.addEventListener('click', downloadCardSvg);
         refs.closeLightboxBtn.addEventListener('click', closeLightbox);
 
         refs.lightbox.addEventListener('click', (event) => {
@@ -1835,10 +5204,7 @@
         }
 
         state.translateAbort?.abort();
-        state.imageAbort?.abort();
         state.translateAbort = null;
-        state.imageAbort = null;
-        state.imageRequest += 1;
 
         const requestId = ++state.translateRequest;
         const controller = new AbortController();
@@ -1847,13 +5213,11 @@
 
         state.translation = '';
         state.sourceText = text;
-        state.candidates = [];
-        state.candidateIndex = 0;
-        state.imageUrl = '';
+        state.cardVariant = 0;
 
         setTranslateLoading(true);
         showResultLoading();
-        clearImageState();
+        clearCardState();
 
         if (window.innerWidth < 1024) {
           refs.resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1876,7 +5240,7 @@
             showToast('O serviço manteve o texto original. Tente uma frase ou um sinônimo.', 'info');
           }
 
-          generateImage(translation, text);
+          renderConceptCard();
         } catch (error) {
           if (error.name === 'AbortError') return;
           if (requestId !== state.translateRequest) return;
@@ -1909,6 +5273,19 @@
       }
 
       async function translateChunk(chunk, langpair, signal) {
+        const normalized = chunk.trim().toLowerCase();
+
+        /* Dicionário local de segurança: evita echo da MyMemory */
+        const [source, target] = langpair.split('|');
+        if (source === 'en' && target === 'pt-BR') {
+          const pt = TRANSLATION_MAP[normalized];
+          if (pt) return pt;
+        }
+        if (source === 'pt-BR' && target === 'en') {
+          const en = Object.entries(TRANSLATION_MAP).find(([, pt]) => pt === normalized);
+          if (en) return en[0];
+        }
+
         const params = new URLSearchParams({ q: chunk, langpair });
         const url = `${API.translate}?${params.toString()}`;
 
@@ -1998,7 +5375,7 @@
         refs.resultContent.classList.remove('is-hidden');
         refs.resultCard.setAttribute('aria-busy', 'false');
         refs.regenerateBtn.disabled = false;
-        refs.imageSourceBadge.textContent = 'Buscando...';
+        refs.conceptBadge.textContent = 'Analisando o conceito...';
 
         refs.resultContent.classList.remove('result-enter');
         void refs.resultContent.offsetWidth;
@@ -2018,13 +5395,18 @@
         state.translation = '';
         state.sourceText = '';
         state.translationMs = 0;
-        state.candidates = [];
-        state.candidateIndex = 0;
+        state.card = null;
+        state.cardVariant = 0;
+        state.cardSvg = '';
         state.imageUrl = '';
         state.imageSource = '';
-        state.imageCredit = '';
-        state.imageCreditUrl = '';
-        state.imageLicense = '';
+        state.aiAbort?.abort();
+        state.aiAbort = null;
+        state.aiBusy = false;
+        clearTimeout(state.aiCooldownTimer);
+        state.aiCooldownTimer = null;
+        state.aiBlockedUntil = 0;
+        releaseAiObjectUrl();
 
         refs.resultContent.classList.add('is-hidden');
         refs.resultError.classList.add('is-hidden');
@@ -2032,12 +5414,14 @@
         refs.resultEmpty.classList.remove('is-hidden');
         refs.resultCard.setAttribute('aria-busy', 'false');
 
-        refs.imageReady.classList.add('is-hidden');
-        refs.imageError.classList.add('is-hidden');
-        refs.imageLoading.classList.add('is-hidden');
-        refs.resultImage.removeAttribute('src');
+        refs.cardReady.classList.add('is-hidden');
+        refs.cardSkeleton.classList.add('is-hidden');
+        refs.conceptCard.innerHTML = '';
+        refs.conceptCard.classList.remove('is-visible');
         refs.regenerateBtn.disabled = true;
-        refs.imageSourceBadge.textContent = 'Aguardando tradução';
+        refs.aiBtn.disabled = true;
+        setAiStatus('');
+        refs.conceptBadge.textContent = 'Aguardando tradução';
       }
 
       function formatDuration(ms) {
@@ -2094,347 +5478,592 @@
       }
 
       /* ------------------------------------------------------------------
-         Imagem
+         Cartão conceitual — ilustração real (Wikimedia) + fallback SVG
          ------------------------------------------------------------------ */
-      function clearImageState() {
-        refs.imageReady.classList.add('is-hidden');
-        refs.imageError.classList.add('is-hidden');
-        refs.imageLoading.classList.remove('is-hidden');
-        refs.resultImage.removeAttribute('src');
+      const CARD_WIDTH = 1200;
+      const CARD_HEIGHT = 675;
+      const CARD_FONT = "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+      const measureContext = document.createElement('canvas').getContext('2d');
+      let cardUid = 0;
+
+      function clearCardState() {
+        state.imageUrl = '';
+        state.imageSource = '';
+        state.cardAbort?.abort();
+        state.cardAbort = null;
+        state.aiAbort?.abort();
+        state.aiAbort = null;
+        state.aiBusy = false;
+        clearTimeout(state.aiCooldownTimer);
+        state.aiCooldownTimer = null;
+        state.aiBlockedUntil = 0;
+        releaseAiObjectUrl();
+        state.imageRequest += 1;
+        refs.cardReady.classList.add('is-hidden');
+        refs.cardSkeleton.classList.remove('is-hidden');
+        refs.conceptCard.innerHTML = '';
+        refs.conceptCard.classList.remove('is-visible');
         refs.regenerateBtn.disabled = true;
-        refs.imageSourceBadge.textContent = 'Buscando...';
+        refs.aiBtn.disabled = true;
+        setAiStatus('');
+        refs.conceptBadge.textContent = 'Analisando o conceito...';
+        state.cardSvg = '';
       }
 
-      async function generateImage(translation, original, { offset = 0 } = {}) {
-        const imgId = ++state.imageRequest;
-        state.imageAbort?.abort();
+      function normalizeTerm(value) {
+        return String(value || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, ' ')
+          .trim();
+      }
+
+      function detectConcept(source, translation) {
+        const haystack = ` ${normalizeTerm(source)} ${normalizeTerm(translation)} `;
+        let best = null;
+        let bestScore = 0;
+
+        for (const concept of CONCEPTS) {
+          let score = 0;
+          for (const keyword of concept.keywords) {
+            if (haystack.includes(` ${normalizeTerm(keyword)} `)) {
+              score += keyword.includes(' ') ? 5 : 4;
+            }
+          }
+          if (score > bestScore) {
+            bestScore = score;
+            best = concept;
+          }
+        }
+
+        if (best) return best;
+
+        const index = hashString(`${source}|${translation}`) % FALLBACK_PALETTES.length;
+        return {
+          id: 'conceito',
+          label: { pt: 'Conceito', en: 'Concept' },
+          icon: 'sparkle',
+          palette: FALLBACK_PALETTES[index],
+          keywords: [],
+        };
+      }
+
+      function measureWidth(text, font) {
+        measureContext.font = font;
+        return measureContext.measureText(text).width;
+      }
+
+      function wrapLines(text, font, maxWidth, maxLines) {
+        measureContext.font = font;
+        const words = String(text || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+        const lines = [];
+        let current = '';
+        let truncated = false;
+
+        for (const word of words) {
+          const candidate = current ? `${current} ${word}` : word;
+          if (!current || measureContext.measureText(candidate).width <= maxWidth) {
+            current = candidate;
+            continue;
+          }
+          lines.push(current);
+          current = word;
+          if (lines.length >= maxLines) {
+            truncated = true;
+            break;
+          }
+        }
+
+        if (!truncated && current) lines.push(current);
+
+        if (truncated && lines.length) {
+          let last = lines[lines.length - 1];
+          while (last && measureContext.measureText(`${last}…`).width > maxWidth) {
+            last = last.replace(/\s*\S+$/, '');
+          }
+          lines[lines.length - 1] = `${last}…`;
+        }
+
+        return { lines, truncated };
+      }
+
+      function escapeXml(value) {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&apos;');
+      }
+
+      function buildImageCardSvg({ term, original, concept, variant = 0, label, uid, imageUrl, source, chipLabel }) {
+        const id = `img-${uid}`;
+        const [first, second] = concept.palette;
+        const showOriginal =
+          original && normalizeTerm(original) && normalizeTerm(original) !== normalizeTerm(term);
+        const originalLines = showOriginal
+          ? wrapLines(original, `500 26px ${CARD_FONT}`, 900, 2).lines
+          : [];
+        const termLines = wrapLines(term, `800 64px ${CARD_FONT}`, 900, 3).lines;
+        if (!termLines.length) termLines = [String(term || '')];
+
+        const termMarkup = termLines
+          .map(
+            (line, index) =>
+              `<text x="${60 + index * 4}" y="${110 + index * 72}" text-anchor="start" font-family="${CARD_FONT}" font-size="${64}" font-weight="800" letter-spacing="-2" fill="#ffffff" style="text-shadow:0 4px 24px rgba(0,0,0,0.55)">${escapeXml(line)}</text>`
+          )
+          .join('\n    ');
+
+        const originalMarkup = originalLines
+          .map(
+            (line, index) =>
+              `<text x="${60 + index * 4}" y="${110 + termLines.length * 72 + 8 + index * 34}" text-anchor="start" font-family="${CARD_FONT}" font-size="26" font-weight="500" fill="#ffffff" fill-opacity="0.82" style="text-shadow:0 2px 12px rgba(0,0,0,0.5)">${escapeXml(line)}</text>`
+          )
+          .join('\n    ');
+
+        const aiSource = source === AI_SOURCE_LABEL;
+        const sourceMarkup = source
+          ? `<text x="${aiSource ? CARD_WIDTH / 2 : CARD_WIDTH - 60}" y="${CARD_HEIGHT - 40}" text-anchor="${aiSource ? 'middle' : 'end'}" font-family="${CARD_FONT}" font-size="${aiSource ? 13 : 15}" font-weight="700" letter-spacing="${aiSource ? 1.6 : 2}" fill="#ffffff" fill-opacity="0.85">${escapeXml(source)}</text>`
+          : '';
+
+        const chip = `<rect x="60" y="62" width="${Math.round(measureWidth(chipLabel, `700 17px ${CARD_FONT}`) + chipLabel.length * 2.2 + 44)}" height="44" rx="22" fill="#ffffff" fill-opacity="0.16" stroke="#ffffff" stroke-opacity="0.3"/>
+        <text x="${60 + 22}" y="91" font-family="${CARD_FONT}" font-size="17" font-weight="700" letter-spacing="2.2" fill="#ffffff" fill-opacity="0.95">${escapeXml(chipLabel)}</text>`;
+
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_WIDTH}" height="${CARD_HEIGHT}" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" role="img" aria-label="${escapeXml(`${term} — ${concept.label.pt}`)}">
+  <title>${escapeXml(`${term} · ${concept.label.pt}`)}</title>
+  <defs>
+    <linearGradient id="${id}-shade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.55"/>
+      <stop offset="0.55" stop-color="#000000" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="${id}-bottom" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+
+  <image href="${escapeXml(imageUrl)}" x="0" y="0" width="${CARD_WIDTH}" height="${CARD_HEIGHT}" preserveAspectRatio="xMidYMid slice" />
+
+  <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="url(#${id}-shade)"/>
+  <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="url(#${id}-bottom)"/>
+
+  ${chip}
+
+  <g>
+    ${termMarkup}
+    ${originalMarkup}
+  </g>
+
+  ${sourceMarkup}
+
+  <rect x="60" y="${CARD_HEIGHT - 78}" width="30" height="2.5" rx="1.25" fill="#ffffff" fill-opacity="0.5"/>
+  <text x="60" y="${CARD_HEIGHT - 50}" font-family="${CARD_FONT}" font-size="13" font-weight="700" letter-spacing="5" fill="#ffffff" fill-opacity="0.55">LUMINA</text>
+</svg>`;
+      }
+
+      function buildConceptSvg({ term, original, concept, variant = 0, label, uid }) {
+        const layout = variant % 3;
+        const inverted = Math.floor(variant / 3) % 2 === 1;
+        const [first, second] = inverted
+          ? [concept.palette[1], concept.palette[0]]
+          : concept.palette;
+        const id = `card-${uid}`;
+        const icon = ICONS[concept.icon] || ICONS.sparkle;
+        const centered = layout === 1;
+
+        const angles = [
+          'x1="0" y1="0" x2="1" y2="1"',
+          'x1="0" y1="0" x2="0.9" y2="1"',
+          'x1="1" y1="0" x2="0" y2="1"',
+        ];
+
+        const textX = centered ? CARD_WIDTH / 2 : layout === 2 ? 468 : 84;
+        const textWidth = centered ? 900 : 620;
+        const anchor = centered ? 'middle' : 'start';
+
+        let termSize = 48;
+        let termLines = [];
+
+        for (const size of [96, 88, 80, 72, 64, 56, 48]) {
+          const wrapped = wrapLines(term, `800 ${size}px ${CARD_FONT}`, textWidth, 3);
+          termSize = size;
+          termLines = wrapped.lines;
+          if (!wrapped.truncated) break;
+        }
+
+        if (!termLines.length) termLines = [String(term || '')];
+
+        const showOriginal =
+          original && normalizeTerm(original) && normalizeTerm(original) !== normalizeTerm(term);
+        const originalLines = showOriginal
+          ? wrapLines(original, `500 25px ${CARD_FONT}`, textWidth, 2).lines
+          : [];
+
+        const lineHeight = Math.round(termSize * 1.08);
+        const gap = 28;
+        const termBlock = (termLines.length - 1) * lineHeight + termSize;
+        const originalBlock = originalLines.length ? gap + 24 + (originalLines.length - 1) * 34 : 0;
+        const blockHeight = termBlock + originalBlock;
+
+        const centerY = centered ? 470 : 345;
+        const firstBaseline = centerY - blockHeight / 2 + termSize * 0.78;
+        const originalBaseline = firstBaseline + (termLines.length - 1) * lineHeight + gap + 20;
+
+        const tile = centered
+          ? { size: 208, x: (CARD_WIDTH - 208) / 2, y: 74 }
+          : layout === 2
+            ? { size: 250, x: 112, y: 218 }
+            : { size: 250, x: 838, y: 218 };
+
+        const iconScale = (tile.size * 0.52) / 100;
+        const iconX = tile.x + (tile.size - 100 * iconScale) / 2;
+        const iconY = tile.y + (tile.size - 100 * iconScale) / 2;
+        const tileCenterX = tile.x + tile.size / 2;
+        const tileCenterY = tile.y + tile.size / 2;
+
+        const chipLabel = String(label || concept.label.pt).toUpperCase();
+        const chipFont = `700 17px ${CARD_FONT}`;
+        const chipWidth = measureWidth(chipLabel, chipFont) + chipLabel.length * 2.2 + 44;
+        const chipX = centered ? (CARD_WIDTH - chipWidth) / 2 : 84;
+
+        const termMarkup = termLines
+          .map(
+            (line, index) =>
+              `<text x="${textX}" y="${Math.round(firstBaseline + index * lineHeight)}" text-anchor="${anchor}" font-family="${CARD_FONT}" font-size="${termSize}" font-weight="800" letter-spacing="-2" fill="#ffffff">${escapeXml(line)}</text>`
+          )
+          .join('\n    ');
+
+        const originalMarkup = originalLines
+          .map(
+            (line, index) =>
+              `<text x="${textX}" y="${Math.round(originalBaseline + index * 34)}" text-anchor="${anchor}" font-family="${CARD_FONT}" font-size="25" font-weight="500" fill="#ffffff" fill-opacity="0.68">${escapeXml(line)}</text>`
+          )
+          .join('\n    ');
+
+        return `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD_WIDTH}" height="${CARD_HEIGHT}" viewBox="0 0 ${CARD_WIDTH} ${CARD_HEIGHT}" role="img" aria-label="${escapeXml(`${term} — ${concept.label.pt}`)}">
+  <title>${escapeXml(`${term} · ${concept.label.pt}`)}</title>
+  <defs>
+    <linearGradient id="${id}-bg" ${angles[layout]}>
+      <stop offset="0" stop-color="${first}"/>
+      <stop offset="1" stop-color="${second}"/>
+    </linearGradient>
+    <radialGradient id="${id}-glow" cx="0.16" cy="0.1" r="0.95">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.38"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="${id}-shade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="${id}-dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.7" fill="#ffffff" fill-opacity="0.16"/>
+    </pattern>
+  </defs>
+
+  <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="url(#${id}-bg)"/>
+  <rect width="${CARD_WIDTH}" height="${CARD_HEIGHT}" fill="url(#${id}-glow)"/>
+  <path d="M0 0h560L300 ${CARD_HEIGHT}H0z" fill="url(#${id}-shade)"/>
+  <rect x="${CARD_WIDTH - 430}" y="0" width="430" height="${CARD_HEIGHT}" fill="url(#${id}-dots)"/>
+
+  <circle cx="${tileCenterX}" cy="${tileCenterY}" r="${Math.round(tile.size * 0.98)}" fill="#ffffff" fill-opacity="0.07"/>
+  <circle cx="${tileCenterX}" cy="${tileCenterY}" r="${Math.round(tile.size * 0.74)}" fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="1.5" stroke-dasharray="3 12"/>
+
+  <rect x="${tile.x}" y="${tile.y}" width="${tile.size}" height="${tile.size}" rx="${Math.round(tile.size * 0.26)}" fill="#ffffff" fill-opacity="0.15" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1.5"/>
+  <g transform="translate(${Math.round(iconX)} ${Math.round(iconY)}) scale(${iconScale.toFixed(3)})" color="#ffffff">${icon}</g>
+
+  <rect x="${Math.round(chipX)}" y="62" width="${Math.round(chipWidth)}" height="44" rx="22" fill="#ffffff" fill-opacity="0.18" stroke="#ffffff" stroke-opacity="0.32"/>
+  <text x="${Math.round(chipX + 22)}" y="91" font-family="${CARD_FONT}" font-size="17" font-weight="700" letter-spacing="2.2" fill="#ffffff" fill-opacity="0.95">${escapeXml(chipLabel)}</text>
+
+  <g>
+    ${termMarkup}
+    ${originalMarkup}
+  </g>
+
+  <rect x="84" y="598" width="30" height="2.5" rx="1.25" fill="#ffffff" fill-opacity="0.45"/>
+  <text x="84" y="628" font-family="${CARD_FONT}" font-size="13" font-weight="700" letter-spacing="5" fill="#ffffff" fill-opacity="0.45">LUMINA</text>
+</svg>`;
+      }
+
+      function renderConceptCard({ animate = true } = {}) {
+        const term = state.translation;
+        if (!term) return;
+
+        const concept = detectConcept(state.sourceText, term);
+        const targetLang = state.direction.split('-')[1];
+        const label = concept.label[targetLang] || concept.label.pt;
+
+        state.card = { concept, variant: state.cardVariant, label, kind: 'pending' };
+        cardUid += 1;
+        state.aiAbort?.abort();
+        state.aiAbort = null;
+        state.aiBusy = false;
+        const previousAiObjectUrl = state.aiObjectUrl;
+        state.aiObjectUrl = '';
+        refs.cardSkeleton.classList.remove('is-hidden');
+        refs.cardReady.classList.add('is-hidden');
+        refs.conceptCard.classList.remove('is-visible');
+        refs.conceptCard.innerHTML = '';
+        refs.conceptBadge.textContent = `Buscando ilustração para “${term}”…`;
+        refs.regenerateBtn.disabled = true;
+        refs.aiBtn.disabled = true;
+
+        const requestId = state.imageRequest + 1;
+        state.imageRequest = requestId;
+        state.cardAbort?.abort();
 
         const controller = new AbortController();
-        state.imageAbort = controller;
-        const signal = controller.signal;
+        state.cardAbort = controller;
+        const timer = setTimeout(() => controller.abort(), IMAGES.timeout);
 
-        showImageLoading();
+        (async () => {
+          let illustration = null;
 
-        const queries = buildSearchQueries(translation, original);
-        state.query = queries[0] || cleanText(translation) || 'abstract';
-
-        try {
-          // 1. Unsplash Source (solicitado). O serviço legado pode estar fora do ar.
-          if (unsplashAvailable !== false) {
-            const url = `${API.unsplash}${encodeURIComponent(state.query)}&sig=${Date.now()}`;
-
-            try {
-              await preloadImage(url, 1800, signal);
-              if (imgId !== state.imageRequest) return;
-
-              unsplashAvailable = true;
-              state.candidates = [{
-                url,
-                source: 'Unsplash',
-                credit: 'Unsplash Source',
-                creditUrl: 'https://unsplash.com',
-                license: '',
-                licenseUrl: '',
-                title: state.query,
-                score: 0,
-              }];
-              state.candidateIndex = 0;
-              await showCandidate(0, imgId, signal);
-              return;
-            } catch (error) {
-              if (error.name === 'AbortError') throw error;
-              unsplashAvailable = false;
-            }
+          try {
+            illustration = await fetchIllustration(term, state.sourceText, controller.signal);
+          } catch (error) {
+            illustration = null;
+          } finally {
+            clearTimeout(timer);
           }
 
-          // 2. Wikimedia Commons (gratuito, sem chave, com CORS).
-          const candidates = await searchCommons(queries, signal, offset);
-          if (imgId !== state.imageRequest) return;
+          /* Pesquisa substituída por outra mais recente: não tocar no cartão. */
+          if (requestId !== state.imageRequest) return;
+          state.cardAbort = null;
 
-          if (candidates.length) {
-            state.candidates = candidates;
-            state.candidateIndex = 0;
-            await showCandidate(0, imgId, signal);
-            return;
+          if (illustration) {
+            state.imageUrl = illustration.url;
+            state.imageSource = illustration.source || 'Wikimedia Commons';
+            state.card.kind = 'image';
+          } else {
+            state.imageUrl = '';
+            state.imageSource = '';
+            state.card.kind = 'svg';
           }
 
-          // 3. Picsum: garante uma imagem ilustrativa mesmo sem resultado semântico.
-          const seed = hashString(`${state.query}:${offset}`);
-          const url = `${API.picsum}${seed}/1200/675`;
-          await preloadImage(url, 15000, signal);
-          if (imgId !== state.imageRequest) return;
-
-          state.candidates = [{
-            url,
-            source: 'Picsum',
-            credit: 'Picsum Photos',
-            creditUrl: 'https://picsum.photos',
-            license: '',
-            licenseUrl: '',
-            title: state.query,
-            score: 0,
-          }];
-          state.candidateIndex = 0;
-          await showCandidate(0, imgId, signal);
-        } catch (error) {
-          if (error.name === 'AbortError') return;
-          if (imgId !== state.imageRequest) return;
-          console.error('Erro na imagem:', error);
-          showImageError(error.message || 'Não foi possível carregar a imagem.');
-        } finally {
-          if (imgId === state.imageRequest) state.imageAbort = null;
-        }
+          finalizeCard({ term, original: state.sourceText, concept, variant: state.cardVariant, label, animate });
+          if (previousAiObjectUrl) URL.revokeObjectURL(previousAiObjectUrl);
+        })();
       }
 
-      function showImageLoading() {
-        refs.imageLoading.classList.remove('is-hidden');
-        refs.imageError.classList.add('is-hidden');
-        refs.imageReady.classList.add('is-hidden');
-        refs.imageSourceBadge.textContent = 'Buscando...';
-        refs.regenerateBtn.disabled = true;
-      }
+      function finalizeCard({ term, original, concept, variant, label, animate }) {
+        const id = `card-${cardUid}`;
+        const chipLabel = String(label || concept.label.pt).toUpperCase();
 
-      function showImageError(message) {
-        refs.imageLoading.classList.add('is-hidden');
-        refs.imageReady.classList.add('is-hidden');
-        refs.imageError.classList.remove('is-hidden');
-        refs.imageErrorText.textContent = message;
-        refs.imageSourceBadge.textContent = 'Imagem indisponível';
-        refs.regenerateBtn.disabled = false;
-      }
-
-      async function showCandidate(index, imgId, signal) {
-        const candidate = state.candidates[index];
-        if (!candidate) return;
-
-        state.candidateIndex = index;
-        showImageLoading();
-        refs.imageSourceBadge.textContent = candidate.source;
-
-        try {
-          await preloadImage(candidate.url, 15000, signal);
-          if (imgId !== state.imageRequest) return;
-
-          state.imageUrl = candidate.url;
-          state.imageSource = candidate.source;
-          state.imageCredit = candidate.credit;
-          state.imageCreditUrl = candidate.creditUrl;
-          state.imageLicense = candidate.license;
-
-          refs.resultImage.src = candidate.url;
-          refs.resultImage.alt = `Imagem ilustrativa para “${state.translation}”`;
-          refs.imageCaption.textContent = truncate(state.translation, 70);
-          refs.imageCredit.textContent = creditText(candidate.credit, candidate.source, candidate.license);
-
-          const creditHref = safeUrl(candidate.creditUrl);
-          refs.imageCredit.href = creditHref || '#';
-          refs.imageCredit.classList.toggle('is-hidden', !creditHref);
-          refs.imageSourceBadge.textContent = candidate.source;
-
-          refs.imageLoading.classList.add('is-hidden');
-          refs.imageError.classList.add('is-hidden');
-          refs.imageReady.classList.remove('is-hidden');
-          refs.regenerateBtn.disabled = false;
-
-          refs.resultImage.style.opacity = '0';
-          requestAnimationFrame(() => {
-            refs.resultImage.style.opacity = '1';
+        if (state.card.kind === 'image' && state.imageUrl) {
+          state.cardSvg = buildImageCardSvg({
+            term,
+            original,
+            concept,
+            variant,
+            label,
+            uid: cardUid,
+            imageUrl: state.imageUrl,
+            source: state.imageSource,
+            chipLabel,
           });
-
-          const next = state.candidates[(index + 1) % state.candidates.length];
-          if (next && next.url !== candidate.url) {
-            const preload = new Image();
-            preload.src = next.url;
-          }
-        } catch (error) {
-          if (error.name === 'AbortError') return;
-          if (imgId !== state.imageRequest) return;
-          showImageError('A imagem não carregou. Tente regenerar.');
+        } else {
+          state.cardSvg = buildConceptSvg({
+            term,
+            original,
+            concept,
+            variant,
+            label,
+            uid: cardUid,
+          });
         }
+
+        refs.conceptCard.innerHTML = state.cardSvg;
+        refs.cardCaption.textContent = `${concept.label.pt} · ${concept.label.en}`;
+        refs.conceptBadge.textContent = `Conceito: ${concept.label.pt}`;
+        refs.cardSkeleton.classList.add('is-hidden');
+        refs.cardReady.classList.remove('is-hidden');
+        refs.regenerateBtn.disabled = false;
+        refs.regenerateBtn.classList.remove('opacity-70');
+
+        refs.conceptCard.classList.remove('is-visible');
+        if (animate) {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => refs.conceptCard.classList.add('is-visible'));
+          });
+        } else {
+          refs.conceptCard.classList.add('is-visible');
+        }
+
+        if (state.card.kind === 'image') {
+          if (state.imageSource !== AI_SOURCE_LABEL) setAiStatus('');
+        } else {
+          setAiStatus('Sem imagem relevante na pesquisa. Pode gerar uma ilustração com IA.');
+        }
+        updateAiButton();
       }
 
-      function regenerateImage() {
+      function regenerateCard() {
         if (!state.translation) return;
+        state.cardVariant = (state.cardVariant + 1) % 6;
+        refs.regenerateBtn.disabled = true;
+        refs.regenerateBtn.classList.add('opacity-70');
+        refs.conceptBadge.textContent = 'Gerando nova variante…';
+        renderConceptCard();
+      }
 
-        if (state.candidates.length > 1) {
-          const next = (state.candidateIndex + 1) % state.candidates.length;
-          showCandidate(next, state.imageRequest, state.imageAbort?.signal);
+      function cardFileName(extension) {
+        return `lumina-${slugify(state.translation || 'cartao')}.${extension}`;
+      }
+
+      function downloadBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      }
+
+      function downloadCardSvg() {
+        if (!state.cardSvg) return;
+        if (state.card.kind === 'image' && state.imageUrl) {
+          downloadImage(state.imageUrl);
           return;
         }
-
-        generateImage(state.translation, state.sourceText, {
-          offset: Math.floor(Math.random() * 24),
-        });
+        downloadBlob(new Blob([state.cardSvg], { type: 'image/svg+xml;charset=utf-8' }), cardFileName('svg'));
+        showToast('Cartão exportado em SVG.', 'success');
       }
 
-      function retryImage() {
-        if (!state.translation) return;
-        generateImage(state.translation, state.sourceText, {
-          offset: Math.floor(Math.random() * 24),
-        });
-      }
-
-      async function searchCommons(queries, signal, offset = 0) {
-        const collected = [];
-        const lastError = [];
-
-        // Consulta as variações em paralelo: o Commons indexa título e descrição,
-        // então cada formulação pode revelar resultados diferentes.
-        const settled = await Promise.allSettled(
-          queries.map((query) => searchCommonsOnce(query, signal, offset))
-        );
-
-        settled.forEach((result, rank) => {
-          if (result.status === 'fulfilled') {
-            for (const item of result.value) {
-              collected.push({ ...item, score: item.score + Math.max(0, 3 - rank) * 3 });
-            }
-          } else if (result.reason?.name === 'AbortError') {
-            throw result.reason;
-          } else {
-            lastError.push(result.reason);
-          }
-        });
-
-        const unique = [];
-        const seen = new Set();
-
-        for (const item of collected) {
-          // Evita recortes do mesmo arquivo (ex.: tiles "-x0-y1" do Google Art Project).
-          const key = item.title.replace(/-x\d+-y\d+/gi, '').toLowerCase();
-          if (seen.has(key)) continue;
-          seen.add(key);
-          unique.push(item);
-        }
-
-        unique.sort((a, b) => b.score - a.score);
-
-        if (unique.length) return unique.slice(0, 8);
-        if (lastError.length === queries.length && lastError[0]) throw lastError[0];
-        return [];
-      }
-
-      async function searchCommonsOnce(query, signal, offset = 0) {
-        const params = new URLSearchParams({
-          action: 'query',
-          format: 'json',
-          origin: '*',
-          generator: 'search',
-          gsrsearch: `filetype:bitmap ${query}`,
-          gsrnamespace: '6',
-          gsrlimit: '24',
-          prop: 'imageinfo',
-          iiprop: 'url|mime|size|extmetadata',
-          iiextmetadatafilter: 'Artist|LicenseShortName|LicenseUrl|Credit',
-          iiurlwidth: '1400',
-        });
-
-        if (offset > 0) params.set('gsroffset', String(offset));
-
-        const response = await fetchWithTimeout(`${API.commons}?${params.toString()}`, { signal }, 15000);
-        if (!response.ok) throw new Error('Não foi possível buscar imagens agora.');
-
-        let data;
+      async function downloadImage(imageUrl) {
         try {
-          data = await response.json();
+          const response = await fetch(imageUrl);
+          if (!response.ok) throw new Error('download failed');
+          const blob = await response.blob();
+          downloadBlob(blob, cardFileName(blob.type.includes('jpeg') || blob.type.includes('jpg') ? 'jpg' : 'png'));
+          showToast('Imagem baixada.', 'success');
         } catch (error) {
-          throw new Error('A busca de imagens retornou uma resposta inválida.');
+          console.error('Erro ao baixar imagem:', error);
+          showToast('Não foi possível baixar a imagem.', 'error');
         }
+      }
 
-        const pages = Object.values(data?.query?.pages || {}).sort(
-          (a, b) => (a.index || 0) - (b.index || 0)
-        );
-        const tokens = query.toLowerCase().split(/\s+/).filter((token) => token.length > 2);
-        const candidates = [];
+      async function downloadCardPng() {
+        if (!state.cardSvg) return;
 
-        for (const page of pages) {
-          const info = page?.imageinfo?.[0];
-          if (!info) continue;
-          if (!/^image\/(jpeg|png|webp)$/i.test(info.mime || '')) continue;
+        const scale = 2;
+        const canvas = document.createElement('canvas');
+        canvas.width = CARD_WIDTH * scale;
+        canvas.height = CARD_HEIGHT * scale;
+        const context = canvas.getContext('2d');
+        context.scale(scale, scale);
 
-          const width = Number(info.width) || 0;
-          const height = Number(info.height) || 0;
-          if (width < 640 || height < 460) continue;
-
-          const ratio = width / height;
-          if (ratio < 0.5 || ratio > 3.2) continue;
-
-          const title = String(page.title || '').replace(/^File:/i, '');
-          if (BAD_TITLE.test(title)) continue;
-
-          const url = safeUrl(info.thumburl || info.url);
-          if (!url) continue;
-
-          const meta = info.extmetadata || {};
-          const artist = stripHtml(meta.Artist?.value || meta.Credit?.value || '');
-          const license = stripHtml(meta.LicenseShortName?.value || '');
-          const licenseUrl = safeUrl(meta.LicenseUrl?.value || '');
-
-          let score = 0;
-          const lowerTitle = title.toLowerCase();
-          for (const token of tokens) {
-            if (lowerTitle.includes(token)) score += 4;
+        try {
+          if (state.card.kind === 'image' && state.imageUrl) {
+            await drawImageCardToCanvas(context, state.imageUrl, state.translation, state.sourceText, state.card.label);
+          } else {
+            const svgUrl = URL.createObjectURL(
+              new Blob([state.cardSvg], { type: 'image/svg+xml;charset=utf-8' })
+            );
+            try {
+              const image = await new Promise((resolve, reject) => {
+                const element = new Image();
+                element.onload = () => resolve(element);
+                element.onerror = () => reject(new Error('render'));
+                element.src = svgUrl;
+              });
+              context.drawImage(image, 0, 0, CARD_WIDTH, CARD_HEIGHT);
+            } finally {
+              URL.revokeObjectURL(svgUrl);
+            }
           }
-          if (lowerTitle.includes(query.toLowerCase())) score += 6;
-          if (ratio >= 1.2 && ratio <= 2.0) score += 2;
-          if (width >= 1200) score += 1;
-          if (/photo|painting|art|illustration|landscape/i.test(title)) score += 1;
 
-          candidates.push({
-            url,
-            source: 'Wikimedia Commons',
-            title,
-            credit: artist || 'Wikimedia Commons',
-            creditUrl: safeUrl(info.descriptionurl) || `https://commons.wikimedia.org/wiki/${encodeURIComponent(page.title || '')}`,
-            license,
-            licenseUrl,
-            score,
+          const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+          if (!blob) throw new Error('png');
+
+          downloadBlob(blob, cardFileName('png'));
+          showToast('Cartão exportado em PNG.', 'success');
+        } catch (error) {
+          console.error('Erro ao gerar PNG:', error);
+          showToast('Não foi possível gerar o PNG. Tente baixar em SVG.', 'error');
+        }
+      }
+
+      async function drawImageCardToCanvas(context, imageUrl, term, original, label) {
+        const image = await new Promise((resolve, reject) => {
+          const element = new Image();
+          element.crossOrigin = 'anonymous';
+          element.onload = () => resolve(element);
+          element.onerror = () => reject(new Error('image load'));
+          element.src = imageUrl;
+        });
+
+        context.drawImage(image, 0, 0, CARD_WIDTH, CARD_HEIGHT);
+
+        const shade = context.createLinearGradient(0, 0, 0, CARD_HEIGHT);
+        shade.addColorStop(0, 'rgba(0,0,0,0.55)');
+        shade.addColorStop(0.55, 'rgba(0,0,0,0.2)');
+        shade.addColorStop(1, 'rgba(0,0,0,0.05)');
+        context.fillStyle = shade;
+        context.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
+
+        const bottom = context.createLinearGradient(0, 0, 0, CARD_HEIGHT);
+        bottom.addColorStop(0, 'rgba(0,0,0,0)');
+        bottom.addColorStop(1, 'rgba(0,0,0,0.5)');
+        context.fillStyle = bottom;
+        context.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
+
+        context.font = '700 17px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif';
+        const chipLabel = String(label || '').toUpperCase();
+        const chipW = context.measureText(chipLabel).width + chipLabel.length * 2.2 + 44;
+        context.fillStyle = 'rgba(255,255,255,0.16)';
+        context.strokeStyle = 'rgba(255,255,255,0.3)';
+        roundRect(context, 60, 62, chipW, 44, 22);
+        context.fill();
+        context.stroke();
+        context.fillStyle = 'rgba(255,255,255,0.95)';
+        context.textBaseline = 'middle';
+        context.fillText(chipLabel, 60 + 22, 62 + 22);
+
+        context.fillStyle = '#ffffff';
+        context.textBaseline = 'alphabetic';
+        context.font = '800 64px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif';
+        context.letterSpacing = '-2px';
+        const lines = wrapLines(term, '800 64px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif', 900, 3).lines || [String(term || '')];
+        lines.forEach((line, index) => {
+          context.shadowColor = 'rgba(0,0,0,0.55)';
+          context.shadowBlur = 24;
+          context.fillText(line, 60 + index * 4, 110 + index * 72);
+        });
+        context.shadowBlur = 0;
+
+        const showOriginal = original && normalizeTerm(original) && normalizeTerm(original) !== normalizeTerm(term);
+        if (showOriginal) {
+          context.font = '500 26px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif';
+          context.fillStyle = 'rgba(255,255,255,0.82)';
+          const origLines = wrapLines(original, '500 26px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif', 900, 2).lines || [];
+          origLines.forEach((line, index) => {
+            context.shadowColor = 'rgba(0,0,0,0.5)';
+            context.shadowBlur = 12;
+            context.fillText(line, 60 + index * 4, 110 + lines.length * 72 + 8 + index * 34);
           });
+          context.shadowBlur = 0;
         }
 
-        return candidates;
+        context.font = '700 13px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif';
+        context.letterSpacing = '5px';
+        context.fillStyle = 'rgba(255,255,255,0.55)';
+        context.fillText('LUMINA', 60, CARD_HEIGHT - 50);
       }
 
-      function buildSearchQueries(translation, original) {
-        const queries = [];
-        const add = (value) => {
-          const query = cleanText(value);
-          if (query.length < 2) return;
-          if (queries.some((existing) => existing.toLowerCase() === query.toLowerCase())) return;
-          queries.push(query);
-        };
-
-        const translated = cleanText(translation);
-        const source = cleanText(original);
-        const [sourceLang] = state.direction.split('-');
-
-        // O Wikimedia Commons é indexado majoritariamente em inglês:
-        // priorize o lado inglês do par, seja ele o original ou a tradução.
-        const englishTerm = sourceLang === 'en' ? source : translated;
-        const localTerm = sourceLang === 'en' ? translated : source;
-
-        const englishKeywords = extractKeywords(englishTerm);
-        const localKeywords = extractKeywords(localTerm);
-
-        // Frases longas rendem buscas melhores pelas palavras-chave;
-        // termos curtos funcionam melhor exatamente como escritos.
-        const isShort = englishTerm.split(' ').length <= 3;
-        if (isShort) add(englishTerm);
-        add(englishKeywords);
-        if (!isShort) add(englishTerm);
-        if (localTerm.length <= 80) add(localTerm);
-        add(localKeywords);
-
-        return queries.slice(0, 3);
-      }
-
-      function extractKeywords(text) {
-        return cleanText(text)
-          .toLowerCase()
-          .split(' ')
-          .filter((word) => word.length > 2 && !STOPWORDS.has(word))
-          .slice(0, 3)
-          .join(' ');
+      function roundRect(context, x, y, w, h, r) {
+        r = Math.min(r, w / 2, h / 2);
+        context.beginPath();
+        context.moveTo(x + r, y);
+        context.arcTo(x + w, y, x + w, y + h, r);
+        context.arcTo(x + w, y + h, x, y + h, r);
+        context.arcTo(x, y + h, x, y, r);
+        context.arcTo(x, y, x + w, y, r);
+        context.closePath();
       }
 
       /* ------------------------------------------------------------------
@@ -2503,58 +6132,10 @@
         }
       }
 
-      function preloadImage(url, timeoutMs = 15000, signal) {
-        return new Promise((resolve, reject) => {
-          if (signal?.aborted) {
-            reject(new DOMException('Aborted', 'AbortError'));
-            return;
-          }
-
-          const image = new Image();
-          let settled = false;
-          let timer;
-
-          const cleanup = () => {
-            clearTimeout(timer);
-            image.onload = null;
-            image.onerror = null;
-            signal?.removeEventListener('abort', onAbort);
-          };
-
-          const finish = (callback, value) => {
-            if (settled) return;
-            settled = true;
-            cleanup();
-            callback(value);
-          };
-
-          const onAbort = () => {
-            image.src = '';
-            finish(reject, new DOMException('Aborted', 'AbortError'));
-          };
-
-          timer = setTimeout(() => {
-            finish(reject, new Error('A imagem demorou demais para carregar.'));
-          }, timeoutMs);
-
-          signal?.addEventListener('abort', onAbort, { once: true });
-
-          image.onload = () => finish(resolve, url);
-          image.onerror = () => finish(reject, new Error('A imagem não pôde ser carregada.'));
-          image.src = url;
-        });
-      }
-
       function decodeHtmlEntities(value) {
         const area = document.createElement('textarea');
         area.innerHTML = String(value);
         return area.value;
-      }
-
-      function stripHtml(value) {
-        const area = document.createElement('div');
-        area.innerHTML = String(value);
-        return (area.textContent || '').replace(/\s+/g, ' ').trim();
       }
 
       function cleanText(value) {
@@ -2569,20 +6150,6 @@
         const text = String(value || '');
         if (text.length <= max) return text;
         return `${text.slice(0, Math.max(0, max - 1)).trimEnd()}…`;
-      }
-
-      function creditText(credit, source, license) {
-        const who = truncate(credit || source || 'Acervo público', 60);
-        return license ? `Foto: ${who} · ${license}` : `Foto: ${who}`;
-      }
-
-      function safeUrl(value) {
-        try {
-          const url = new URL(String(value), window.location.href);
-          return /^https?:$/.test(url.protocol) ? url.href : '';
-        } catch (error) {
-          return '';
-        }
       }
 
       function hashString(value) {
@@ -2606,57 +6173,52 @@
 
       function abortAll() {
         state.translateAbort?.abort();
-        state.imageAbort?.abort();
         state.translateAbort = null;
-        state.imageAbort = null;
         state.translateRequest += 1;
+        state.cardAbort?.abort();
+        state.cardAbort = null;
+        state.aiAbort?.abort();
+        state.aiAbort = null;
+        state.aiBusy = false;
         state.imageRequest += 1;
         state.busy = false;
         setTranslateLoading(false);
+        updateAiButton();
       }
 
       /* ------------------------------------------------------------------
-         Download e lightbox
+         Lightbox
          ------------------------------------------------------------------ */
-      async function downloadImage() {
-        if (!state.imageUrl) return;
-
-        const filename = `lumina-${slugify(state.translation || 'imagem')}.jpg`;
-
-        try {
-          const response = await fetch(state.imageUrl, { mode: 'cors' });
-          if (!response.ok) throw new Error('download failed');
-
-          const blob = await response.blob();
-          const objectUrl = URL.createObjectURL(blob);
-          const link = document.createElement('a');
-
-          link.href = objectUrl;
-          link.download = filename;
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-
-          setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
-          showToast('Imagem baixada.', 'success');
-        } catch (error) {
-          window.open(state.imageUrl, '_blank', 'noopener,noreferrer');
-          showToast('Abrimos a imagem em uma nova aba para você salvar.', 'info');
-        }
-      }
-
       function openLightbox() {
-        if (!state.imageUrl) return;
+        if (!state.card) return;
 
         state.lastFocus = document.activeElement;
-        refs.lightboxImage.src = state.imageUrl;
-        refs.lightboxImage.alt = `Imagem ilustrativa para “${state.translation}”`;
-        refs.lightboxCaption.textContent = state.translation;
-        refs.lightboxCredit.textContent = creditText(state.imageCredit, state.imageSource, state.imageLicense);
+        cardUid += 1;
 
-        const creditHref = safeUrl(state.imageCreditUrl);
-        refs.lightboxCredit.href = creditHref || '#';
-        refs.lightboxCredit.classList.toggle('is-hidden', !creditHref);
+        if (state.card.kind === 'image' && state.imageUrl) {
+          refs.lightboxCard.innerHTML = buildImageCardSvg({
+            term: state.translation,
+            original: state.sourceText,
+            concept: state.card.concept,
+            variant: state.card.variant,
+            label: state.card.label,
+            uid: cardUid,
+            imageUrl: state.imageUrl,
+            source: state.imageSource,
+            chipLabel: String(state.card.label || '').toUpperCase(),
+          });
+        } else {
+          refs.lightboxCard.innerHTML = buildConceptSvg({
+            term: state.translation,
+            original: state.sourceText,
+            concept: state.card.concept,
+            variant: state.card.variant,
+            label: state.card.label,
+            uid: cardUid,
+          });
+        }
+
+        refs.lightboxCaption.textContent = `${state.card.concept.label.pt} · ${state.translation}`;
 
         refs.lightbox.classList.remove('is-hidden');
         document.body.classList.add('no-scroll');
@@ -2665,7 +6227,7 @@
 
       function closeLightbox() {
         refs.lightbox.classList.add('is-hidden');
-        refs.lightboxImage.removeAttribute('src');
+        refs.lightboxCard.innerHTML = '';
         document.body.classList.remove('no-scroll');
 
         if (state.lastFocus instanceof HTMLElement) state.lastFocus.focus();
